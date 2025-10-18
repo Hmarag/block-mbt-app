@@ -1,26 +1,22 @@
-# Ορίζουμε τις βάσεις δεδομένων σε ξεχωριστό τμήμα
+# Ορίζουμε τις βάσεις δεδομένων
 databases:
   - name: block-mbt-db
-    databaseName: block_mbt_db_prod # Ένα όνομα για τη βάση, π.χ. production
-    user: block_mbt_user
-    plan: free # Χρήση του δωρεάν πλάνου
-    postgres:
-      version: 15
+    plan: free
 
-# Ορίζουμε τις υπόλοιπες υπηρεσίες (backend, frontend, redis)
+# Ορίζουμε τις υπηρεσίες
 services:
-  # 1. Η Redis Instance (ως Private Service)
+  # 1. Redis
   - type: pserv
     name: block-mbt-redis
     env: redis
-    plan: free # Χρήση του δωρεάν πλάνου
+    plan: free
 
-  # 2. Το Backend API (FastAPI)
+  # 2. Backend (FastAPI)
   - type: web
     name: block-mbt-backend
     env: python
     rootDir: backend
-    plan: free # Χρήση του δωρεάν πλάνου
+    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
@@ -35,16 +31,13 @@ services:
           property: connectionString
       - key: PYTHON_VERSION
         value: "3.11.2"
-    secretFiles:
-      - path: /etc/secrets/.env
-        name: block-mbt-secrets
 
-  # 3. Το Frontend (React/Vite)
+  # 3. Frontend (React)
   - type: web
     name: block-mbt-frontend
     env: static
     rootDir: frontend
-    plan: free # Χρήση του δωρεάν πλάνου
+    plan: free
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
     routes:
