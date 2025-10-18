@@ -1,0 +1,38 @@
+.contactPaper {
+  background-color: var(--mantine-color-body);
+  border-style: solid; /* Προσθέτουμε και το στυλ */
+  border-width: 4px;   /* Το έντονο πάχος που θέλουμε */
+  border-color: var(--mantine-color-text);
+}
+
+.input {
+  border-width: 2px;
+  border-color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-md);
+  transition: border-color 150ms ease;
+}
+
+.input:focus {
+  border-color: var(--mantine-color-text);
+}
+
+.label {
+  font-weight: 600;
+  font-size: var(--mantine-font-size-md);
+  margin-bottom: 4px;
+}
+
+.control {
+  background-color: var(--mantine-color-text);
+  color: var(--mantine-color-body);
+  font-size: var(--mantine-font-size-lg);
+  padding: 12px 32px;
+  border-radius: var(--mantine-radius-md);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.control:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+  background-color: var(--mantine-color-text);
+}

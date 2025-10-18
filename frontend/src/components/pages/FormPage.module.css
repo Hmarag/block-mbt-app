@@ -1,0 +1,215 @@
+.formPaper {
+  background: #f8f9fa;
+  border: 4px solid black;
+}
+
+.formTitle {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.questionBlock {
+  background-color: #ffffff;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+}
+
+.optionWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionLabel {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-color: #f8f9fa;
+}
+
+.optionLabel:hover {
+  background-color: #f1f3f5;
+}
+
+.optionLabelSelected {
+  border-color: #1A1B1E;
+  background-color: #ffffff;
+}
+
+.optionText {
+  font-size: 1.1rem;
+  color: #343A40;
+}
+
+.optionInput {
+  display: none;
+}
+
+.radioBullet {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #adb5bd;
+  border-radius: 50%;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.radioBullet::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #1A1B1E;
+  transform: scale(0);
+  transition: transform 0.2s ease;
+}
+
+.optionLabelSelected .radioBullet {
+  border-color: #1A1B1E;
+}
+
+.optionLabelSelected .radioBullet::after {
+  transform: scale(1);
+}
+
+.subQuestionBlock {
+  padding: 1rem;
+  border-left: 3px solid #dee2e6;
+  margin-left: 0.5rem;
+}
+
+.checkboxSquare {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #adb5bd;
+  border-radius: 4px;
+  margin-right: 12px;
+  transition: background-color 0.2s, border-color 0.2s;
+  position: relative;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
+.optionLabelSelected .checkboxSquare {
+  background-color: black;
+  border-color: black;
+}
+
+.optionLabelSelected .checkboxSquare::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* --- ΣΤΥΛ ΓΙΑ ΤΟ ΕΙΚΟΝΙΔΙΟ ΠΛΗΡΟΦΟΡΙΩΝ --- */
+.infoIcon {
+  cursor: help;
+  color: #868e96;
+  background-color: #f1f3f5;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.infoIcon:hover {
+  background-color: black;
+  color: white;
+}
+
+
+/* --- DARK MODE STYLES --- */
+[data-mantine-color-scheme='dark'] .formPaper {
+  background: var(--mantine-color-dark-7);
+  border-color: white;
+}
+
+[data-mantine-color-scheme='dark'] .questionBlock {
+  background-color: var(--mantine-color-dark-6);
+  border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabel {
+  background-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabel:hover {
+  background-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabelSelected {
+  border-color: var(--mantine-color-gray-2);
+  background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .optionText {
+  color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .radioBullet {
+  border-color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .radioBullet::after {
+  background-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabelSelected .radioBullet {
+  border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .checkboxSquare {
+  border-color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabelSelected .checkboxSquare {
+  background-color: var(--mantine-color-gray-2);
+  border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .optionLabelSelected .checkboxSquare::after {
+  border-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .subQuestionBlock {
+  border-left-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .chapterNav button[data-variant='filled'] {
+  background-color: white;
+  color: black;
+}
+
+[data-mantine-color-scheme='dark'] .chapterNav button[data-variant='outline'] {
+  border-color: var(--mantine-color-dark-2);
+  color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .chapterNav button[data-variant='outline']:hover {
+  background-color: var(--mantine-color-dark-5);
+}
+
+/* --- ΣΤΥΛ ΓΙΑ ΤΟ ΕΙΚΟΝΙΔΙΟ ΠΛΗΡΟΦΟΡΙΩΝ (DARK MODE) --- */
+[data-mantine-color-scheme='dark'] .infoIcon {
+  color: var(--mantine-color-dark-2);
+  background-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .infoIcon:hover {
+  background-color: var(--mantine-color-gray-2);
+  color: var(--mantine-color-dark-7);
+}

@@ -1,0 +1,84 @@
+.dashboardPaper {
+  border: 4px solid black;
+  background-color: white;
+}
+
+.createButton {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.createButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.emptyState {
+  padding: 60px 20px;
+  min-height: 200px;
+  background-color: #f8f9fa;
+  border-radius: var(--mantine-radius-md);
+}
+
+.projectCard {
+  transition: all 0.2s ease;
+}
+
+.projectCard:hover {
+  transform: translateY(-4px);
+  border-color: #868e96;
+}
+
+.modalContent {
+  border: 4px solid black;
+}
+
+.modalButton {
+  border-width: 2px;
+}
+
+/* --- DARK MODE STYLES --- */
+
+[data-mantine-color-scheme='dark'] .dashboardPaper {
+  /* --- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ --- */
+  /* Το χρώμα του Paper γίνεται το ίδιο με το φόντο της σελίδας (dark.7) */
+  background-color: var(--mantine-color-dark-7);
+  border-color: white;
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+  background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .projectCard {
+  background-color: var(--mantine-color-dark-6);
+  border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .projectCard:hover {
+  border-color: var(--mantine-color-gray-5);
+}
+
+[data-mantine-color-scheme='dark'] .projectCard button[data-variant='light'] {
+  background-color: transparent;
+  border: 1px solid var(--mantine-color-dark-2);
+  color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .projectCard button[data-variant='light']:hover {
+  background-color: var(--mantine-color-dark-6);
+  border-color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .modalContent {
+  border-color: white;
+  background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .modalButton {
+  border-color: var(--mantine-color-dark-3);
+  color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .modalButton:hover {
+  background-color: var(--mantine-color-dark-5);
+}

@@ -1,0 +1,46 @@
+.title {
+  font-family: 'Greycliff CF', var(--mantine-font-family);
+  font-weight: 900;
+}
+
+.submitButton,
+.googleButton {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.submitButton:hover,
+.googleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+[data-mantine-color-scheme='dark'] .link {
+  color: var(--mantine-color-white);
+}
+
+[data-mantine-color-scheme='dark'] .formPanel {
+  background-color: var(--mantine-color-dark-6);
+  border-color: white; /* Αλλάζει το χρώμα του πλαισίου σε λευκό */
+}
+
+.link {
+  color: var(--mantine-color-blue-6);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.formPanel {
+  border: 4px solid black; /* Ορίζει έντονο μαύρο πλαίσιο */
+}
+
+.submitButton {
+  background-color: var(--mantine-color-black);
+}
+
+[data-mantine-color-scheme='dark'] .submitButton {
+  background-color: var(--mantine-color-gray-8);
+  color: var(--mantine-color-white);
+}

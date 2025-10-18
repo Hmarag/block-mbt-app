@@ -1,0 +1,24 @@
+.pageTitle {
+  font-size: 48px;
+  font-weight: 900;
+  margin-bottom: var(--mantine-spacing-xl);
+}
+
+.block {
+  border: 4px solid black;
+  background-color: var(--mantine-color-gray-0);
+}
+
+.blockTitle {
+  border-bottom: 2px solid var(--mantine-color-gray-4);
+  padding-bottom: var(--mantine-spacing-sm);
+}
+
+[data-mantine-color-scheme='dark'] .block {
+  border-color: white;
+  background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .blockTitle {
+  border-bottom-color: var(--mantine-color-dark-4);
+}

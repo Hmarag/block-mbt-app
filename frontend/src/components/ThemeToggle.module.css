@@ -1,0 +1,30 @@
+.toggle {
+    position: relative;
+    width: 38px;
+    height: 38px;
+}
+
+.icon {
+    position: absolute;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.light {
+    opacity: 0;
+    transform: rotate(-180deg);
+}
+
+.dark {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+[data-mantine-color-scheme='dark'] .light {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+[data-mantine-color-scheme='dark'] .dark {
+    opacity: 0;
+    transform: rotate(180deg);
+}

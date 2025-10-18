@@ -1,0 +1,8 @@
+.panel {
+  border-color: var(--mantine-color-black);
+  border-width: 4px;
+}
+
+[data-mantine-color-scheme='dark'] .panel {
+  border-color: var(--mantine-color-white);
+}

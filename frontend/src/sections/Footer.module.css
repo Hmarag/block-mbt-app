@@ -1,0 +1,100 @@
+.footer {
+  margin-top: 0px;
+  padding-top: calc(var(--mantine-spacing-xl) * 2);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
+  background-color: var(--mantine-color-gray-0);
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+/* Κανόνες για το Dark Theme */
+[data-mantine-color-scheme='dark'] .footer {
+  background-color: var(--mantine-color-dark-6);
+  border-top-color: var(--mantine-color-dark-5);
+}
+
+.logo {
+  max-width: 200px;
+}
+
+.inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+.groups {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wrapper {
+  width: 160px;
+}
+
+.link {
+  display: block;
+  color: var(--mantine-color-gray-6);
+  /* ΑΛΛΑΓΗ ΕΔΩ: από sm σε md */
+  font-size: var(--mantine-font-size-md);
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+[data-mantine-color-scheme='dark'] .link {
+  color: var(--mantine-color-dark-1);
+}
+
+.title {
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 700;
+  font-family: Greycliff CF, var(--mantine-font-family);
+  margin-bottom: calc(var(--mantine-spacing-xs) / 2);
+  color: var(--mantine-color-black);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+  color: var(--mantine-color-white);
+}
+
+.afterFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--mantine-spacing-xl);
+  padding-top: var(--mantine-spacing-xl);
+  padding-bottom: var(--mantine-spacing-xl);
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .afterFooter {
+  border-top-color: var(--mantine-color-dark-4);
+}
+
+/* Κανόνες για τις μικρές οθόνες (κινητά) */
+@media (max-width: 768px) {
+  .inner {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .groups {
+    display: none; /* Κρύβουμε τις στήλες με τα links στα κινητά */
+  }
+
+  .afterFooter {
+    flex-direction: column;
+  }
+
+  .social {
+    margin-top: var(--mantine-spacing-xs);
+  }
+}

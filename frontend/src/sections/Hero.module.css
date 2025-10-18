@@ -1,0 +1,131 @@
+.ctaButton {
+  background-color: var(--mantine-color-black);
+  color: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  padding: 12px 24px;
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+/* Ορίζουμε το στυλ του κουμπιού ΜΟΝΟ όταν η σελίδα είναι σε dark mode */
+[data-mantine-color-scheme='dark'] .ctaButton {
+    background-color: var(--mantine-color-white);
+    color: var(--mantine-color-black);
+}
+
+/* Προσθέτουμε κι ένα ωραίο hover effect για το dark mode */
+[data-mantine-color-scheme='dark'] .ctaButton:hover {
+    background-color: var(--mantine-color-gray-2);
+}
+
+/* Στυλ για το μεμονωμένο λογότυπο κάτω από το κουμπί */
+.companyLogo {
+  width: 30%; 
+  height: auto; /* Το ύψος προσαρμόζεται αυτόματα */
+  
+  margin-top: 20px; /* Αρνητική τιμή για να πάει πιο πάνω */
+  margin-right: auto; /* Το μετακινεί αριστερά */
+  margin-left: 31.7%; /* Προσαρμόστε αυτή την τιμή για την ακριβή θέση */
+}
+
+.blockCard {
+  border: 5px solid black; /* Ορίζει πλάτος, στυλ και χρώμα μαζί */
+  min-height: 220px;
+}
+
+.blocksGrid {
+  margin-top: -50px; /* Προσαρμόστε αυτή την τιμή για να πάει όσο πάνω θέλετε */
+}
+
+.blockTitle {
+  width: 100%; /* Κάνει τη γραμμή να πιάνει όλο το πλάτος */
+  border-bottom: 3px solid black; /* Η "bold" γραμμή υπογράμμισης */
+  padding-bottom: 10px; /* Απόσταση μεταξύ κειμένου και γραμμής */
+  margin-bottom: 15px; /* Απόσταση μεταξύ γραμμής και του κάτω μέρους */
+}
+
+[data-mantine-color-scheme='dark'] .blockCard {
+  border-color: white;
+}
+
+/* Αλλάζει το χρώμα της υπογράμμισης του τίτλου σε λευκό */
+[data-mantine-color-scheme='dark'] .blockTitle {
+  border-bottom-color: white;
+}
+
+.expandedPanel {
+  min-height: 350px; /* Προσαρμόστε αυτό το ύψος όσο θέλετε */
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- 3D TEXT EFFECT --- */
+
+.title3D {
+  position: relative; /* Απαραίτητο για τη σωστή στοίχιση των shadows */
+  color: var(--mantine-color-black); /* Βασικό χρώμα κειμένου για το light mode */
+  transition: all 0.3s ease-out;
+  /* Δημιουργούμε το 3D εφέ με πολλαπλά shadows που "χτίζουν" το βάθος */
+  text-shadow: 
+    1px 1px 0 #c1c2c5,
+    2px 2px 0 #c1c2c5,
+    3px 3px 0 #a6a7ab,
+    4px 4px 0 #a6a7ab,
+    5px 5px 0 #909296,
+    6px 6px 10px rgba(0, 0, 0, 0.2); /* Ένα τελικό, απαλό shadow για ομαλότητα */
+}
+
+/* Διαδραστικό εφέ στο hover: "Ανασηκώνουμε" το κείμενο */
+.title3D:hover {
+  transform: translate(-2px, -2px);
+  text-shadow: 
+    1px 1px 0 #c1c2c5,
+    2px 2px 0 #c1c2c5,
+    3px 3px 0 #a6a7ab,
+    4px 4px 0 #a6a7ab,
+    5px 5px 0 #909296,
+    6px 6px 0 #909296,
+    7px 7px 0 #5c5f66,
+    8px 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Προσαρμόζουμε το 3D εφέ για το Dark Mode */
+[data-mantine-color-scheme='dark'] .title3D {
+  color: var(--mantine-color-gray-2); /* Πιο φωτεινό χρώμα για να ξεχωρίζει */
+  text-shadow:
+    1px 1px 0 #141517,
+    2px 2px 0 #141517,
+    3px 3px 0 #101113,
+    4px 4px 0 #101113,
+    5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Και το αντίστοιχο hover για το Dark Mode */
+[data-mantine-color-scheme='dark'] .title3D:hover {
+  transform: translate(-2px, -2px);
+  color: var(--mantine-color-white);
+  text-shadow:
+    1px 1px 0 #141517,
+    2px 2px 0 #141517,
+    3px 3px 0 #101113,
+    4px 4px 0 #101113,
+    5px 5px 0 #101113,
+    6px 6px 0 #101113,
+    7px 7px 20px rgba(0, 0, 0, 0.6);
+}

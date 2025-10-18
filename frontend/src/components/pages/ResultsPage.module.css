@@ -1,0 +1,55 @@
+.resultsPaper {
+  border: 4px solid black;
+  min-height: 400px;
+}
+
+[data-mantine-color-scheme='dark'] .resultsPaper {
+  border-color: white;
+  background-color: var(--mantine-color-dark-7);
+}
+
+.dashboardButton {
+  position: fixed;
+  top: 100px;
+  left: 40px;
+  z-index: 200;
+}
+
+/* Στυλ για το περιεχόμενο που έρχεται από το Markdown */
+.markdownContent h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--mantine-color-gray-4);
+  padding-bottom: 0.5rem;
+}
+
+.markdownContent h2 {
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.markdownContent h3 {
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdownContent p,
+.markdownContent li {
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.markdownContent ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+}
+
+.markdownContent strong {
+  font-weight: 700;
+}
+
+[data-mantine-color-scheme='dark'] .markdownContent h1 {
+  border-bottom-color: var(--mantine-color-dark-4);
+}
