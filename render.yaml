@@ -35,15 +35,15 @@ services:
           name: block-mbt-redis
           property: connectionString
       - key: PYTHON_VERSION
-        value: "3.11.2" # Η έκδοση που χρησιμοποιείς
+        value: "3.11.2"
     secretFiles:
       - path: /etc/secrets/.env
         name: block-mbt-secrets
 
   # 4. Το Frontend (React/Vite)
-  - type: static site # <-- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ: "static site" αντί για "static"
+  - type: web # <-- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ
     name: block-mbt-frontend
-    env: static # Αυτό παραμένει σωστό
+    env: static # <-- ΚΑΙ ΕΔΩ
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
