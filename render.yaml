@@ -41,9 +41,9 @@ services:
         name: block-mbt-secrets
 
   # 4. Το Frontend (React/Vite)
-  - type: static
+  - type: static site # <-- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ: "static site" αντί για "static"
     name: block-mbt-frontend
-    env: static
+    env: static # Αυτό παραμένει σωστό
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
