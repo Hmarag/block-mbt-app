@@ -1,32 +1,31 @@
-services:
-  # 1. Η Βάση Δεδομένων PostgreSQL
-  - type: pserv
-    name: block-mbt-db
-    env: postgres
+# Ορίζουμε τις βάσεις δεδομένων σε ξεχωριστό τμήμα
+databases:
+  - name: block-mbt-db
+    databaseName: block_mbt_db_prod # Ένα όνομα για τη βάση, π.χ. production
+    user: block_mbt_user
+    plan: free # Χρήση του δωρεάν πλάνου
     postgres:
       version: 15
-    disk:
-      name: postgres-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
 
-  # 2. Η Redis Instance
+# Ορίζουμε τις υπόλοιπες υπηρεσίες (backend, frontend, redis)
+services:
+  # 1. Η Redis Instance (ως Private Service)
   - type: pserv
     name: block-mbt-redis
     env: redis
+    plan: free # Χρήση του δωρεάν πλάνου
 
-  # 3. Το Backend API (FastAPI)
+  # 2. Το Backend API (FastAPI)
   - type: web
     name: block-mbt-backend
     env: python
-    runtime: python3
     rootDir: backend
+    plan: free # Χρήση του δωρεάν πλάνου
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: block-mbt-db
           property: connectionString
       - key: REDIS_URL
@@ -40,17 +39,18 @@ services:
       - path: /etc/secrets/.env
         name: block-mbt-secrets
 
-  # 4. Το Frontend (React/Vite)
-  - type: web # <-- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ
+  # 3. Το Frontend (React/Vite)
+  - type: web
     name: block-mbt-frontend
-    env: static # <-- ΚΑΙ ΕΔΩ
+    env: static
     rootDir: frontend
+    plan: free # Χρήση του δωρεάν πλάνου
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
     routes:
       - type: rewrite
-        source: /api/*
-        destination: https://block-mbt-backend.onrender.com/*
+        source: /api/(.*)
+        destination: https://block-mbt-backend.onrender.com/api/$1
       - type: rewrite
         source: /*
         destination: /index.html
