@@ -2,10 +2,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import auth_utils
-from . import crud
-from .database import get_session
-from .schemas import UserOut
+from database import get_session
+from auth_utils import decode_access_token
+from crud import get_user_by_username
+from models import User
 
 # --- ΤΕΛΙΚΗ ΑΛΛΑΓΗ: Το tokenUrl πρέπει να ταιριάζει με το endpoint του login ---
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

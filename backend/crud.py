@@ -2,9 +2,9 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 import json
 
-from .models import User, Project, Answer
-from .schemas import ProjectCreate, AnswersIn
-from .auth_utils import get_password_hash
+from models import User, Project, Answer
+from schemas import ProjectCreate, AnswersIn
+from auth_utils import get_password_hash
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
     result = await session.execute(select(User).where(User.username == username))

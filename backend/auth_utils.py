@@ -2,8 +2,8 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
-from . import crud
-from .models import User
+from models import User
+from crud import get_user_by_username, get_user_by_email
 
 # --- Password Hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

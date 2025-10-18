@@ -18,11 +18,14 @@ else:
     load_dotenv(dotenv_path=dotenv_path)
 # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 1 ---
 
-from .database import get_session, engine
-from .models import Base, User
-from .schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm
-from . import crud, auth_utils, ai_utils, email_utils
-from .deps import get_current_user
+from database import get_session, engine
+from models import Base, User
+from schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm
+from crud import create_user, get_user_by_username, get_user_by_email
+import auth_utils
+import ai_utils
+import email_utils
+from deps import get_current_user
 
 app = FastAPI(title="Block MBT API")
 
