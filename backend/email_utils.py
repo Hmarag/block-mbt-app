@@ -29,8 +29,8 @@ def send_verification_email(recipient_email: str, verification_link: str):
     try:
         sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sendgrid_client.send(message)
-        print(f"--- DEBUG: Trying to use API Key: {os.environ.get('SENDGRID_API_KEY')} ---")
-        print(f"Email sent to {recipient_email}, status code: {response.status_code}")
+        
+        print(f"Email sent to {recipient_email}, status code: {getattr(response, 'status_code', 'unknown')}")
     except Exception as e:
         print(f"Error sending email: {e}")
 

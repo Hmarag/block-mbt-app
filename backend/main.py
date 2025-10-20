@@ -1,5 +1,14 @@
+# ...existing code...
 import os
 from dotenv import load_dotenv
+
+# Φόρτωσε πρώτα τα environment variables (Render secret file ή το τοπικό .env)
+secrets_path = "/etc/secrets/.env"
+if os.path.exists(secrets_path):
+    load_dotenv(dotenv_path=secrets_path)
+else:
+    load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+
 import json
 from fastapi import FastAPI, HTTPException, status, Depends, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,25 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from typing import List, Union
 import crud
-
-# --- ΑΛΛΑΓΗ 1: Δυναμική φόρτωση των environment variables ---
-# Ελέγχει αν υπάρχει το secret file του Render και το φορτώνει.
-# Αλλιώς, φορτώνει το τοπικό .env αρχείο για development.
-secrets_path = "/etc/secrets/.env"
-if os.path.exists(secrets_path):
-    load_dotenv(dotenv_path=secrets_path)
-else:
-    load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
-# --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 1 ---
-
-from database import get_session, engine
-from models import Base, User
-from schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm
-from crud import create_user, get_user_by_username, get_user_by_email
-import auth_utils
-import ai_utils
-import email_utils
-from deps import get_current_user
+# ...existing code...
 
 app = FastAPI(title="Block MBT API")
 

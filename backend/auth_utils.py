@@ -1,3 +1,4 @@
+import os
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
@@ -8,13 +9,13 @@ from models import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # --- JWT Settings for Login ---
-SECRET_KEY = "a_very_secret_key_that_should_be_in_env_file" # TODO: Move to .env
+SECRET_KEY = os.getenv("SECRET_KEY", "a_very_secret_key_that_should_be_in_env_file")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(60 * 24))) # 24 hours
 
-# --- ΝΕΟ: JWT Settings for Email Verification ---
-VERIFICATION_SECRET_KEY = "another_super_secret_for_verification" # TODO: Move to .env
-VERIFICATION_TOKEN_EXPIRE_MINUTES = 60 * 24 # 1 day
+# --- JWT Settings for Email Verification (read from env) ---
+VERIFICATION_SECRET_KEY = os.getenv("VERIFICATION_SECRET_KEY", "another_super_secret_for_verification")
+VERIFICATION_TOKEN_EXPIRE_MINUTES = int(os.getenv("VERIFICATION_TOKEN_EXPIRE_MINUTES", str(60 * 24)))
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
