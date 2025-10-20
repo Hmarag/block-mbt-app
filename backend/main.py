@@ -6,16 +6,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from typing import List, Union
+import crud
 
 # --- ΑΛΛΑΓΗ 1: Δυναμική φόρτωση των environment variables ---
 # Ελέγχει αν υπάρχει το secret file του Render και το φορτώνει.
 # Αλλιώς, φορτώνει το τοπικό .env αρχείο για development.
-secrets_path = '/etc/secrets/.env'
+secrets_path = "/etc/secrets/.env"
 if os.path.exists(secrets_path):
     load_dotenv(dotenv_path=secrets_path)
 else:
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-    load_dotenv(dotenv_path=dotenv_path)
+    load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 1 ---
 
 from database import get_session, engine

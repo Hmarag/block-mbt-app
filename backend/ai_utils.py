@@ -1,10 +1,20 @@
+# ...existing code...
 import os
 from openai import OpenAI
-# --- ΑΛΛΑΓΗ: Εισάγουμε το mapping των ερωτήσεων ---
-from .questionnaire_data_py import QUESTIONS_MAP
+# change relative import to absolute (backend is rootDir)
+from questionnaire_data_py import QUESTIONS_MAP
+import asyncio
+# ...existing code...
 
 # Φορτώνουμε το API key με ασφάλεια
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+def get_openai_client() -> OpenAI:
+    """
+    Δημιουργεί και επιστρέφει OpenAI client. Αν δεν υπάρχει KEY, ρίχνει RuntimeError.
+    """
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY not set")
+    return OpenAI(api_key=api_key)
 
 def format_answers_for_prompt(answers: dict) -> str:
     """
@@ -84,18 +94,41 @@ async def generate_advice_for_project(answers: dict, project_type: str, project_
     Μίλα πάντα σε δεύτερο πρόσωπο ("η ιδέα σου", "πρέπει να εστιάσεις"). Να είσαι ενθαρρυντικός αλλά ρεαλιστής. Η ανάλυσή σου πρέπει να είναι πυκνή, χωρίς περιττές φράσεις.
     """
 
+# ...existing code...
+    # μετά το system_prompt
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": formatted_answers},
+    ]
+
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": formatted_answers}
-            ],
-            temperature=0.6,
-            max_tokens=2500,
+        client = get_openai_client()
+
+        # Execute blocking SDK call in a thread so the async event loop is not blocked
+        response = await asyncio.to_thread(
+            lambda: client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                temperature=0.6,
+                max_tokens=2500,
+            )
         )
-        advice = response.choices[0].message.content
+
+        # safe extraction with fallbacks
+        advice = None
+        try:
+            advice = response.choices[0].message.content
+        except Exception:
+            try:
+                advice = response.choices[0].text
+            except Exception:
+                advice = getattr(response, "text", None) or str(response)
+
         return advice if advice else "Δεν ήταν δυνατή η δημιουργία συμβουλών."
+    except RuntimeError as re:
+        print(f"AI client error: {re}")
+        return "Παρουσιάστηκε σφάλμα: το OPENAI_API_KEY δεν έχει ρυθμιστεί."
     except Exception as e:
         print(f"OpenAI API error: {e}")
         return "Παρουσιάστηκε σφάλμα κατά την επικοινωνία με την υπηρεσία AI. Παρακαλώ δοκιμάστε ξανά αργότερα."
+# ...existing code...

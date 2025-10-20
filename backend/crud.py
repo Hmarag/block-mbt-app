@@ -4,7 +4,6 @@ import json
 
 from models import User, Project, Answer
 from schemas import ProjectCreate, AnswersIn
-from auth_utils import get_password_hash
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
     result = await session.execute(select(User).where(User.username == username))
@@ -15,6 +14,9 @@ async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
     return result.scalars().first()
 
 async def create_user(session: AsyncSession, username: str, email: str, password: str) -> User:
+    # lazy import to avoid circular import
+    from auth_utils import get_password_hash
+
     hashed_password = get_password_hash(password)
     db_user = User(username=username, email=email, hashed_password=hashed_password)
     session.add(db_user)

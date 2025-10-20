@@ -3,9 +3,10 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_session
-from auth_utils import decode_access_token
-from crud import get_user_by_username
+import auth_utils
+import crud
 from models import User
+from schemas import UserOut
 
 # --- ΤΕΛΙΚΗ ΑΛΛΑΓΗ: Το tokenUrl πρέπει να ταιριάζει με το endpoint του login ---
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -16,6 +17,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSe
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
     
     payload = auth_utils.decode_token(token)
     if payload is None:

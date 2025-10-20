@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import User
-from crud import get_user_by_username, get_user_by_email
 
 # --- Password Hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -40,17 +39,24 @@ def decode_token(token: str):
     except JWTError:
         return None
 
-async def authenticate_user(session: AsyncSession, username_or_email: str, password: str) -> User | None:
+# ...existing code...
+
+async def authenticate_user(session, username_or_email: str, password: str) -> User | None:
+    # lazy import to avoid circular import
+    from crud import get_user_by_email, get_user_by_username
+
     user = None
     if "@" in username_or_email:
-        user = await crud.get_user_by_email(session, email=username_or_email)
+        user = await get_user_by_email(session, email=username_or_email)
     else:
-        user = await crud.get_user_by_username(session, username=username_or_email)
+        user = await get_user_by_username(session, username=username_or_email)
 
     if not user or not verify_password(password, user.hashed_password):
         return None
     
     return user
+
+# ...existing code...
 
 # --- ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Δημιουργία Token για Επιβεβαίωση Email ---
 def create_verification_token(email: str) -> str:
