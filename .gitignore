@@ -1,0 +1,36 @@
+# Root .gitignore for the repository
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.log
+
+# Editor / OS
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python / backend
+backend/.venv/
+backend/.venv/*
+backend/__pycache__/
+backend/*.pyc
+backend/.pytest_cache/
+backend/.mypy_cache/
+
+# Secrets and env
+.env
+.env.*
+backend/.env
+
+# Docker / misc
+docker-compose.override.yml
+.env.local
