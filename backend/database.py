@@ -1,12 +1,16 @@
+# ...existing code...
 import os
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://devuser:devpass@localhost:5432/block_mbt",
-)
+# Read DATABASE_URL only from environment — no hardcoded credentials in repo
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    # local fallback for dev (optional) or raise to avoid silent use of wrong DB
+    # DATABASE_URL = "sqlite+aiosqlite:///./dev.db"
+    raise RuntimeError("DATABASE_URL not set. Set it as environment variable.")
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
@@ -21,3 +25,4 @@ except Exception:
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
+# ...existing code...
