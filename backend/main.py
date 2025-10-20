@@ -9,12 +9,22 @@ if os.path.exists(secrets_path):
 else:
     load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
+# --- IMPORTS ΠΟΥ ΧΡΕΙΑΖΟΜΑΣΤΕ ΑΜΕΣΑ ---
+from database import get_session, engine
+from models import Base
 import json
 from fastapi import FastAPI, HTTPException, status, Depends, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from typing import List, Union
+
+# Σχήματα/Utilities (πρέπει να είναι μετά το load_dotenv)
+from schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm
+import auth_utils
+import ai_utils
+import email_utils
+from deps import get_current_user
 import crud
 # ...existing code...
 
