@@ -34,7 +34,7 @@ app = FastAPI(title="Block MBT API")
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://block-mbt-frontend.onrender.com" # Η διεύθυνση του live frontend στο Render
+    "https://block-mbt-front.onrender.com" # Η διεύθυνση του live frontend στο Render
 ]
 # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 2 ---
 
