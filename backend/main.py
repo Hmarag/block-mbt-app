@@ -67,7 +67,7 @@ async def register_user(user: UserCreate, background_tasks: BackgroundTasks, ses
     verification_token = auth_utils.create_verification_token(email=new_user.email)
     
     # --- ΑΛΛΑΓΗ 3: Δυναμικό URL για το verification link ---
-    frontend_url = os.getenv("FRONTEND_URL", "https://block-mbt-frontend.onrender.com")
+    frontend_url = os.getenv("FRONTEND_URL", "https://block-mbt-front.onrender.com")
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 3 ---
     
