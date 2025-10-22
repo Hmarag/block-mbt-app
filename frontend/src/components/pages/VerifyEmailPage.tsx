@@ -4,6 +4,7 @@ import axios from '../../api/axiosConfig';
 import { Container, Paper, Title, Text, Loader, Button, Alert, Stack } from '@mantine/core';
 import { IconCircleCheck, IconAlertCircle } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext'; // --- ΒΗΜΑ 1: Εισάγουμε το useAuth ---
+import { isAxiosError } from 'axios';
 
 export function VerifyEmailPage() {
   const [searchParams] = useSearchParams();

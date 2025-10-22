@@ -18,6 +18,7 @@ import {
 import { GoogleIcon } from './GoogleIcon';
 import classes from './RegisterPage.module.css';
 import axios from '../../api/axiosConfig';
+import { isAxiosError } from 'axios';
 import { useState, useEffect } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';

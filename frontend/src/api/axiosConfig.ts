@@ -14,8 +14,9 @@ instance.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('authToken');
     if (token) {
-      // ασφαλής ανάθεση headers ώστε να μην σπάσει ο τύπος
-      config.headers = { ...(config.headers ?? {}), Authorization: `Bearer ${token}` };
+      if (!config.headers) config.headers = {};
+      // cast σε απλό record για να αποφύγουμε τύπο AxiosHeaders
+      (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
