@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { GoogleIcon } from './GoogleIcon';
 import classes from './RegisterPage.module.css';
-+import axios from '../../api/axiosConfig';
+import axios from '../../api/axiosConfig';
 import { useState, useEffect } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
