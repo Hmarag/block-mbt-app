@@ -39,7 +39,7 @@ export function VerifyEmailPage() {
 
       } catch (err: any) {
         setStatus('error');
-        if (axios.isAxiosError(err) && err.response) {
+        if (isAxiosError(err) && err.response) {
           setMessage(err.response.data.detail || 'Προέκυψε ένα σφάλμα. Ο σύνδεσμος μπορεί να είναι άκυρος ή να έχει λήξει.');
         } else {
           setMessage('Δεν ήταν δυνατή η επικοινωνία με τον server.');

@@ -81,7 +81,7 @@ export function RegisterPage() {
       navigate('/login');
 
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response) {
+      if (isAxiosError(err) && err.response) {
         setError(err.response.data.detail || 'Προέκυψε ένα άγνωστο σφάλμα.');
       } else {
         setError('Δεν ήταν δυνατή η σύνδεση με τον server.');
