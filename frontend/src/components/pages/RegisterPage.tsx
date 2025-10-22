@@ -1,6 +1,6 @@
 import { useForm } from '@mantine/form';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
++import axios from '../../api/axiosConfig';
 import { useState, useEffect } from 'react';
 
 import {
