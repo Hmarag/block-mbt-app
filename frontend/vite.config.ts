@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 
 
 export default defineConfig({
-  base : '/',
+  base : '/frontend',
   plugins: [react()],
   css: {
     postcss: './postcss.config.cjs',
