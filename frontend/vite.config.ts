@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 
 
 export default defineConfig({
-  base : '/block-mbt-app/frontend',
+  base : '/Prekonias/block-mbt-app/frontend',
   plugins: [react()],
   css: {
     postcss: './postcss.config.cjs',
