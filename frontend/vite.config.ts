@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/Prekonias/block-mbt-app/frontend',
+  base: '/',
   plugins: [react()],
   css: {
     postcss: './postcss.config.cjs',
