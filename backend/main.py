@@ -34,7 +34,7 @@ app = FastAPI(title="Block MBT API")
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://block-mbt-front.onrender.com" # Η διεύθυνση του live frontend στο Render
+    "https://block-mbt-frontend.netlify.app" # Η διεύθυνση του live frontend στο Render
 ]
 # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 2 ---
 
@@ -67,7 +67,7 @@ async def register_user(user: UserCreate, background_tasks: BackgroundTasks, ses
     verification_token = auth_utils.create_verification_token(email=new_user.email)
     
     # --- ΑΛΛΑΓΗ 3: Δυναμικό URL για το verification link ---
-    frontend_url = os.getenv("FRONTEND_URL", "https://block-mbt-front.onrender.com")
+    frontend_url = os.getenv("FRONTEND_URL", "https://block-mbt-frontend.netlify.app")
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 3 ---
     
