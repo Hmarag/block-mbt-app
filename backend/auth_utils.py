@@ -8,14 +8,20 @@ from models import User
 # --- Password Hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# --- JWT Settings for Login ---
-SECRET_KEY = os.getenv("SECRET_KEY", "a_very_secret_key_that_should_be_in_env_file")
+# --- JWT Settings ---
+# Αφαιρούμε τις επικίνδυνες fallback τιμές
+SECRET_KEY = os.getenv("SECRET_KEY")
+VERIFICATION_SECRET_KEY = os.getenv("VERIFICATION_SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(60 * 24))) # 24 hours
 
-# --- JWT Settings for Email Verification (read from env) ---
-VERIFICATION_SECRET_KEY = os.getenv("VERIFICATION_SECRET_KEY", "another_super_secret_for_verification")
-VERIFICATION_TOKEN_EXPIRE_MINUTES = int(os.getenv("VERIFICATION_TOKEN_EXPIRE_MINUTES", str(60 * 24)))
+# Διατηρούμε τις fallback τιμές για τις ρυθμίσεις χρόνου, καθώς δεν είναι μυστικά
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(60))) # 1 hour default
+VERIFICATION_TOKEN_EXPIRE_MINUTES = int(os.getenv("VERIFICATION_TOKEN_EXPIRE_MINUTES", str(60 * 24))) # 24 hours default
+
+# --- ΚΡΙΣΙΜΟΣ ΕΛΕΓΧΟΣ ΑΣΦΑΛΕΙΑΣ ---
+# Αν τα κλειδιά δεν έχουν οριστεί, η εφαρμογή δεν πρέπει να ξεκινήσει.
+if not SECRET_KEY or not VERIFICATION_SECRET_KEY:
+    raise RuntimeError("CRITICAL: SECRET_KEY and VERIFICATION_SECRET_KEY must be set in environment variables.")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -28,7 +34,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        # Χρησιμοποιούμε τη ρύθμιση από το .env
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -39,8 +46,6 @@ def decode_token(token: str):
         return payload
     except JWTError:
         return None
-
-# ...existing code...
 
 async def authenticate_user(session, username_or_email: str, password: str) -> User | None:
     # lazy import to avoid circular import
@@ -57,9 +62,8 @@ async def authenticate_user(session, username_or_email: str, password: str) -> U
     
     return user
 
-# ...existing code...
+# --- Συναρτήσεις για Επιβεβαίωση Email ---
 
-# --- ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Δημιουργία Token για Επιβεβαίωση Email ---
 def create_verification_token(email: str) -> str:
     expires_delta = timedelta(minutes=VERIFICATION_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now(timezone.utc) + expires_delta
@@ -67,7 +71,6 @@ def create_verification_token(email: str) -> str:
     encoded_jwt = jwt.encode(to_encode, VERIFICATION_SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# --- ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Αποκωδικοποίηση Token Επιβεβαίωσης ---
 def decode_verification_token(token: str) -> str | None:
     try:
         payload = jwt.decode(token, VERIFICATION_SECRET_KEY, algorithms=[ALGORITHM])

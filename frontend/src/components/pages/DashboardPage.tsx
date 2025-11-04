@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Title, Text, Paper, Stack, Button, Modal, TextInput, Card, Group, ThemeIcon, Transition } from '@mantine/core';
+// --- ΠΡΟΣΘΗΚΗ ΤΟΥ ICON ΓΙΑ ΤΟ ΚΑΤΕΒΑΣΜΑ ---
 import { IconPencil, IconTrash, IconPlus, IconFilesOff, IconChartBar } from '@tabler/icons-react';
 import axios from '../../api/axiosConfig';
 import { useAuth } from '../../context/AuthContext';
@@ -45,6 +46,9 @@ export function DashboardPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // --- ΝΕΑ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΤΗΝ ΕΞΑΓΩΓΗ PDF ---
+ 
 
   const addProject = async (projectType: 'existing' | 'new') => {
     if (!newProjectName.trim() || !projectType) return;
@@ -155,7 +159,11 @@ export function DashboardPage() {
                         </div>
                         <Group gap="sm">
                           {project.ai_advice && (
-                            <Button size="sm" variant="light" leftSection={<IconChartBar size={16} />} onClick={(e) => { e.stopPropagation(); navigate(`/project/${project.id}/results`); }}>Αποτελέσματα</Button>
+                            <>
+                              <Button size="sm" variant="light" leftSection={<IconChartBar size={16} />} onClick={(e) => { e.stopPropagation(); navigate(`/project/${project.id}/results`); }}>Αποτελέσματα</Button>
+                              {/* --- ΤΟ ΝΕΟ ΚΟΥΜΠΙ ΓΙΑ PDF --- */}
+                              
+                            </>
                           )}
                           <Button size="sm" variant="light" leftSection={<IconPencil size={16} />} onClick={(e) => { e.stopPropagation(); navigate(`/project/${project.id}`, { state: { projectType: project.type } }); }}>Επεξεργασία</Button>
                           <Button size="sm" color="red" variant="outline" leftSection={<IconTrash size={16} />} onClick={(e) => { e.stopPropagation(); deleteProject(project.id); }}>Διαγραφή</Button>

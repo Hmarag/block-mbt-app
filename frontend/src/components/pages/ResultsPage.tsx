@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Paper, Title, Text, Loader, Stack, Alert, ActionIcon, Tooltip, Affix, Button, Group } from '@mantine/core';
 import axios from '../../api/axiosConfig';
 import { useAuth } from '../../context/AuthContext';
-import { IconAlertCircle, IconLayoutDashboard } from '@tabler/icons-react';
+import { IconAlertCircle, IconLayoutDashboard } from '@tabler/icons-react'; // <-- ΠΡΟΣΘΗΚΗ IconDownload
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import classes from './ResultsPage.module.css';
@@ -15,6 +15,8 @@ export function ResultsPage() {
   const [advice, setAdvice] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const fetchOrGenerateAdvice = async () => {
@@ -60,7 +62,6 @@ export function ResultsPage() {
         </Tooltip>
       </Affix>
 
-      {/* --- 1η ΑΛΛΑΓΗ: Αφαιρέσαμε το 'withBorder' για να εφαρμοστεί σωστά το custom border --- */}
       <Paper shadow="xl" p="xl" radius="md" className={classes.resultsPaper}>
         {isLoading && (
           <Stack align="center" gap="lg" my="xl">
@@ -80,12 +81,12 @@ export function ResultsPage() {
           </div>
         )}
 
-        {/* --- 2η ΑΛΛΑΓΗ: Προσθήκη του κουμπιού επιστροφής --- */}
         {!isLoading && (
           <Group justify="center" mt="xl">
             <Button size="lg" variant="default" onClick={() => navigate('/dashboard')}>
               Επιστροφή στο Dashboard
             </Button>
+            
           </Group>
         )}
       </Paper>

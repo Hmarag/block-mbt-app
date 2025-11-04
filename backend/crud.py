@@ -1,6 +1,7 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 import json
+import bleach  # <-- ΠΡΟΣΘΗΚΗ
 
 from models import User, Project, Answer
 from schemas import ProjectCreate, AnswersIn
@@ -25,7 +26,18 @@ async def create_user(session: AsyncSession, username: str, email: str, password
     return db_user
 
 async def create_project(session: AsyncSession, project: ProjectCreate, owner_id: int) -> Project:
-    db_project = Project(**project.dict(), owner_id=owner_id)
+    # --- ΑΛΛΑΓΗ ΕΔΩ: Καθαρίζουμε τα δεδομένα πριν την αποθήκευση ---
+    clean_name = bleach.clean(project.name)
+    clean_description = bleach.clean(project.description) if project.description else None
+
+    db_project = Project(
+        name=clean_name,
+        description=clean_description,
+        type=project.type,
+        owner_id=owner_id
+    )
+    # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ ---
+    
     session.add(db_project)
     await session.commit()
     await session.refresh(db_project)

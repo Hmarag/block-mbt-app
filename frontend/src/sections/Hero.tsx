@@ -98,7 +98,13 @@ export function Hero() {
       
       <Stack align="center" gap="lg">
 
-        <Title order={1} ta="center" fz={84} className={classes.title3D}>Το βασικό εργαλείο<br />για την επιχείρηση</Title>
+        {/* --- ΑΛΛΑΓΗ ΕΔΩ --- */}
+        <Title order={1} ta="center" className={classes.titleContainer}>
+          <span className={classes.titleBlock}>BLOCK</span>
+          <span className={classes.titleSubtitle}>Το βασικό εργαλείο για την επιχείρηση</span>
+        </Title>
+        {/* --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ --- */}
+
         <Text size="xl" c="dimmed" ta="center">Ο ψηφιακός σύμβουλος που χρειάζεσαι.<br />Για να χτίσεις, να οργανώσεις και να αναπτυχθείς.</Text>
         <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')}>Ξεκινήστε</Button>
         <img src={companyLogo} alt="Company Logo" className={classes.companyLogo} />

@@ -1,4 +1,3 @@
-# ...existing code...
 import os
 from dotenv import load_dotenv
 
@@ -18,6 +17,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from typing import List, Union
+from fastapi.responses import RedirectResponse
+
+# Imports για το Rate Limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Σχήματα/Utilities (πρέπει να είναι μετά το load_dotenv)
 from schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm
@@ -26,17 +31,32 @@ import ai_utils
 import email_utils
 from deps import get_current_user
 import crud
-# ...existing code...
+
+# --- ΠΡΟΣΘΗΚΕΣ ΓΙΑ GOOGLE AUTH ---
+from google_auth import google_client, REDIRECT_URI
+import secrets
+# --- ΤΕΛΟΣ ΠΡΟΣΘΗΚΩΝ ---
+
+
+# --- ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ LIMITER ---
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="Block MBT API")
 
-# --- ΑΛΛΑΓΗ 2: Προσθήκη του live URL στα επιτρεπόμενα origins ---
+# --- ΣΥΝΔΕΣΗ ΤΟΥ LIMITER ΜΕ ΤΗΝ ΕΦΑΡΜΟΓΗ ---
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# --- CORS Settings ---
+# Επιτρέπει αιτήματα από τα live domains και το τοπικό περιβάλλον
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://block-mbt-frontend.netlify.app" # Η διεύθυνση του live frontend στο Render
+    "https://www.blockmbt.com",
+    "https://blockmbt.com",
+    "https://www.blockmbt.gr",
+    "https://blockmbt.gr",
 ]
-# --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 2 ---
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,6 +73,47 @@ async def on_startup():
 
 # --- Authentication Endpoints ---
 
+@app.get("/auth/google/login", tags=["Authentication"])
+async def google_login():
+    authorization_url = await google_client.get_authorization_url(
+        redirect_uri=REDIRECT_URI,
+    )
+    return RedirectResponse(authorization_url)
+
+@app.get("/auth/google/callback", tags=["Authentication"])
+async def google_callback(code: str, session: AsyncSession = Depends(get_session)):
+    try:
+        token_data = await google_client.get_access_token(code, redirect_uri=REDIRECT_URI)
+        access_token_value = token_data["access_token"]
+
+        user_info_tuple = await google_client.get_id_email(token=access_token_value)
+        
+        user_email = user_info_tuple[1]
+        user_name = user_info_tuple[2] if len(user_info_tuple) > 2 and user_info_tuple[2] else user_email.split('@')[0]
+        user_name = user_name.replace(" ", "_")
+
+        db_user = await crud.get_user_by_email(session, email=user_email)
+
+        if not db_user:
+            random_password = secrets.token_urlsafe(16)
+            db_user = await crud.create_user(session, username=user_name, email=user_email, password=random_password)
+            db_user.is_active = True
+            await session.commit()
+            await session.refresh(db_user)
+
+        access_token = auth_utils.create_access_token(data={"sub": db_user.username})
+
+        # Θα πάρει το live URL από τα env vars του Render
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+        response = RedirectResponse(url=f"{frontend_url}/auth/callback?token={access_token}")
+        return response
+
+    except Exception as e:
+        print(f"Google Auth Error: {e}")
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+        return RedirectResponse(url=f"{frontend_url}/login?error=google-auth-failed")
+
+
 @app.post("/auth/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user: UserCreate, background_tasks: BackgroundTasks, session: AsyncSession = Depends(get_session)):
     db_user = await crud.get_user_by_username(session, user.username)
@@ -66,10 +127,10 @@ async def register_user(user: UserCreate, background_tasks: BackgroundTasks, ses
     
     verification_token = auth_utils.create_verification_token(email=new_user.email)
     
-    # --- ΑΛΛΑΓΗ 3: Δυναμικό URL για το verification link ---
-    frontend_url = os.getenv("FRONTEND_URL", "https://block-mbt-frontend.netlify.app")
+    # *** Η ΚΡΙΣΙΜΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ***
+    # Θα πάρει το live URL από τα env vars του Render, αλλιώς θα χρησιμοποιήσει το localhost.
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
-    # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ 3 ---
     
     background_tasks.add_task(
         email_utils.send_verification_email, 
@@ -193,8 +254,10 @@ async def get_project_answers(
 # --- AI Advice Endpoint ---
 
 @app.post("/projects/{project_id}/generate-advice", response_model=ProjectOut)
+@limiter.limit("5/hour")
 async def generate_ai_advice(
     project_id: int,
+    request: Request,
     session: AsyncSession = Depends(get_session),
     current_user: UserOut = Depends(get_current_user)
 ):
@@ -225,7 +288,6 @@ async def generate_ai_advice(
     await session.refresh(project)
 
     return project
-
 
 @app.post("/contact", status_code=status.HTTP_202_ACCEPTED)
 async def handle_contact_form(form_data: ContactForm, background_tasks: BackgroundTasks):

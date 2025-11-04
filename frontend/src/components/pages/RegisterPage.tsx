@@ -20,7 +20,7 @@ import {
   Alert,
   Transition,
 } from '@mantine/core';
-import { GoogleIcon } from './/GoogleIcon';
+import { GoogleIcon } from './GoogleIcon'; // Διόρθωσα τη διαδρομή για σιγουριά
 import classes from './RegisterPage.module.css';
 import { IconAlertCircle } from '@tabler/icons-react';
 
@@ -92,6 +92,15 @@ export function RegisterPage() {
     }
   }; 
  
+  // --- ΠΡΟΣΘΗΚΗ ΛΟΓΙΚΗΣ ΓΙΑ GOOGLE LOGIN ---
+  const handleGoogleLogin = () => {
+    // Αυτή η λογική είναι ΙΔΙΑ με της σελίδας Login.
+    // Το backend θα χειριστεί αυτόματα αν ο χρήστης είναι νέος ή παλιός.
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    window.location.href = `${backendUrl}/auth/google/login`;
+  };
+  // --- ΤΕΛΟΣ ΠΡΟΣΘΗΚΗΣ ---
+
   return (
     <Transition mounted={mounted} transition="fade" duration={400} timingFunction="ease">
       {(styles) => (
@@ -121,7 +130,13 @@ export function RegisterPage() {
                   </Alert>
                 )}
 
-                <Button leftSection={<GoogleIcon />} variant="default" size="xl" className={classes.googleButton}>
+                <Button
+                  leftSection={<GoogleIcon />}
+                  variant="default"
+                  size="xl"
+                  className={classes.googleButton}
+                  onClick={handleGoogleLogin} // <-- ΠΡΟΣΘΗΚΗ onClick
+                >
                   Google
                 </Button>
 
