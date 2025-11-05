@@ -75,14 +75,15 @@ export function LoginPage() {
     }
   };
 
-  // --- ΠΡΟΣΘΗΚΗ ΛΟΓΙΚΗΣ ΓΙΑ GOOGLE LOGIN ---
   const handleGoogleLogin = () => {
-    // Παίρνουμε το URL του backend από τις μεταβλητές περιβάλλοντος ή χρησιμοποιούμε το default για local development
     const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    // Ανακατευθύνουμε τον χρήστη στο endpoint του backend που ξεκινά το Google OAuth flow
-    window.location.href = `${backendUrl}/auth/google/login`;
+    
+    // *** Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ***
+    // Διασφαλίζει ότι δεν θα υπάρξει ποτέ διπλό slash
+    const googleLoginUrl = `${backendUrl.replace(/\/$/, '')}/auth/google/login`;
+    
+    window.location.href = googleLoginUrl;
   };
-  // --- ΤΕΛΟΣ ΠΡΟΣΘΗΚΗΣ ---
 
   return (
     <Transition mounted={mounted} transition="fade" duration={400} timingFunction="ease">
@@ -113,13 +114,12 @@ export function LoginPage() {
                   </Alert>
                 )}
 
-                {/* --- ΠΡΟΣΘΗΚΗ onClick ΣΤΟ ΚΟΥΜΠΙ GOOGLE --- */}
                 <Button 
                   leftSection={<GoogleIcon />} 
                   variant="default" 
                   size="xl" 
                   className={classes.googleButton}
-                  onClick={handleGoogleLogin} // <-- ΑΥΤΟ ΠΡΟΣΤΕΘΗΚΕ
+                  onClick={handleGoogleLogin}
                 >
                   Google
                 </Button>
