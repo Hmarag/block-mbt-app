@@ -127,8 +127,6 @@ async def register_user(user: UserCreate, background_tasks: BackgroundTasks, ses
     
     verification_token = auth_utils.create_verification_token(email=new_user.email)
     
-    # *** Η ΚΡΙΣΙΜΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ***
-    # Θα πάρει το live URL από τα env vars του Render, αλλιώς θα χρησιμοποιήσει το localhost.
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     
@@ -214,6 +212,22 @@ async def get_project_details(
     if not project or project.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return project
+
+@app.delete("/projects/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(
+    project_id: int,
+    session: AsyncSession = Depends(get_session),
+    current_user: UserOut = Depends(get_current_user)
+):
+    """
+    Endpoint για τη διαγραφή ενός project.
+    """
+    deleted_project = await crud.delete_project_by_id(session, project_id=project_id, owner_id=current_user.id)
+    
+    if deleted_project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found or you do not have permission to delete it")
+    
+    return
 
 # --- Answer Endpoints ---
 

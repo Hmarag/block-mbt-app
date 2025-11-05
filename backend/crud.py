@@ -1,7 +1,7 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 import json
-import bleach  # <-- ΠΡΟΣΘΗΚΗ
+import bleach
 
 from models import User, Project, Answer
 from schemas import ProjectCreate, AnswersIn
@@ -26,7 +26,6 @@ async def create_user(session: AsyncSession, username: str, email: str, password
     return db_user
 
 async def create_project(session: AsyncSession, project: ProjectCreate, owner_id: int) -> Project:
-    # --- ΑΛΛΑΓΗ ΕΔΩ: Καθαρίζουμε τα δεδομένα πριν την αποθήκευση ---
     clean_name = bleach.clean(project.name)
     clean_description = bleach.clean(project.description) if project.description else None
 
@@ -36,7 +35,6 @@ async def create_project(session: AsyncSession, project: ProjectCreate, owner_id
         type=project.type,
         owner_id=owner_id
     )
-    # --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ ---
     
     session.add(db_project)
     await session.commit()
@@ -54,10 +52,8 @@ async def create_project_answers(session: AsyncSession, project_id: int, answers
 
     new_answers = []
     for q_id, q_value in answers_in.answers.items():
-        # Μετατρέπουμε τις λίστες σε JSON string για αποθήκευση
         value_to_db = json.dumps(q_value) if isinstance(q_value, list) else q_value
         
-        # Αγνοούμε τις κενές τιμές
         if not value_to_db or (isinstance(value_to_db, str) and value_to_db.strip() == ""):
             continue
 
@@ -84,3 +80,17 @@ async def get_projects_by_owner(session: AsyncSession, owner_id: int) -> list[Pr
 async def get_answers_by_project_id(session: AsyncSession, project_id: int) -> list[Answer]:
     result = await session.execute(select(Answer).where(Answer.project_id == project_id))
     return result.scalars().all()
+
+async def delete_project_by_id(session: AsyncSession, project_id: int, owner_id: int):
+    """
+    Διαγράφει ένα project αφού επιβεβαιώσει ότι ανήκει στον σωστό χρήστη.
+    """
+    project = await get_project_by_id(session, project_id)
+    
+    # Έλεγχος ασφαλείας: Ο χρήστης μπορεί να διαγράψει μόνο τα δικά του projects
+    if not project or project.owner_id != owner_id:
+        return None # Επιστρέφει None αν το project δεν βρεθεί ή δεν ανήκει στον χρήστη
+    
+    await session.delete(project)
+    await session.commit()
+    return project # Επιστρέφει το project που διαγράφηκε για επιβεβαίωση
