@@ -71,54 +71,44 @@ export function Hero() {
   const panelRef = useRef<HTMLDivElement>(null);
   const blocksGridRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
-  const [scrollRequested, setScrollRequested] = useState(false);
 
   const { colorScheme } = useMantineColorScheme();
   const logoSrc = colorScheme === 'dark' ? logoLight : logoDark;
 
-  const { ref: intersectionRef, entry } = useIntersection({
+  const { ref: intersectionRef} = useIntersection({
     root: null,
     threshold: 0.15,
   });
 
+  // --- ΑΛΛΑΓΗ 1: Απλοποιούμε τη λογική του scroll ---
   useEffect(() => {
-    if (entry?.isIntersecting && !hasAnimated) {
-      setHasAnimated(true);
+    // Αυτό το effect τρέχει κάθε φορά που αλλάζει το activeBlock
+    if (activeBlock && blocksGridRef.current) {
+      // Χρησιμοποιούμε ένα μικρό timeout για να δώσουμε χρόνο στον browser να ξεκινήσει τις αλλαγές
+      const timer = setTimeout(() => {
+        if (blocksGridRef.current) {
+          const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
+          const offset = 200; 
+
+          window.scrollTo({
+            top: elementPosition - offset,
+            behavior: 'smooth'
+          });
+        }
+      }, 50); // 50ms είναι αρκετά για να ξεκινήσει η animation χωρίς να φαίνεται η καθυστέρηση
+
+      return () => clearTimeout(timer);
     }
-  }, [entry?.isIntersecting, hasAnimated]);
+  }, [activeBlock]); // Τώρα εξαρτάται ΜΟΝΟ από το activeBlock
 
-  useEffect(() => {
-    if (!scrollRequested || !isAnimationComplete) {
-      return;
-    }
-
-    if (blocksGridRef.current) {
-      const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
-      const offset = 200; 
-
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: 'smooth'
-      });
-    }
-    
-    setScrollRequested(false);
-
-  }, [scrollRequested, isAnimationComplete]);
-
-  // --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+  // --- ΑΛΛΑΓΗ 2: Απλοποιούμε και το click handler ---
   const handleBlockClick = (blockType: BlockType) => {
-    // 1. Εναλλάσσουμε την εμφάνιση της μεγάλης κάρτας
-    setActiveBlock(prev => (prev === blockType ? null : blockType));
-    
-    // 2. "Σημειώνουμε" ότι ο χρήστης ζήτησε scroll
-    setScrollRequested(true);
-
-    // 3. Εξασφαλίζουμε ότι η animation θα ξεκινήσει, ακόμα κι αν ο χρήστης δεν έχει κάνει scroll
+    // 1. Εξασφαλίζουμε ότι η animation θα ξεκινήσει
     if (!hasAnimated) {
       setHasAnimated(true);
     }
+    // 2. Εναλλάσσουμε την εμφάνιση της μεγάλης κάρτας, που θα πυροδοτήσει το useEffect
+    setActiveBlock(prev => (prev === blockType ? null : blockType));
   };
 
   const containerPaddingBottom = activeBlock ? '0px' : '100px';
@@ -146,6 +136,7 @@ export function Hero() {
         
         <img src={logoSrc} alt="Company Logo" className={classes.companyLogo} />
 
+        {/* --- ΑΛΛΑΓΗ 3: Το intersectionRef τώρα απλά πυροδοτεί την animation αν ο χρήστης κάνει scroll --- */}
         <div ref={intersectionRef} style={{ height: '1px', width: '100%' }} />
 
         <Transition 
@@ -153,7 +144,6 @@ export function Hero() {
           transition="slide-up" 
           duration={800} 
           timingFunction="ease"
-          onEntered={() => setIsAnimationComplete(true)}
         >
           {(styles) => (
             <SimpleGrid 
