@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
+// ... (imports παραμένουν ίδια) ...
 import { Container, Title, Text, Stack, Button, SimpleGrid, Card, List, ThemeIcon, Group, Divider, Transition, useMantineColorScheme } from '@mantine/core';
 import { IconCircleCheck, IconTool } from '@tabler/icons-react';
 import { useIntersection } from '@mantine/hooks';
@@ -7,6 +8,7 @@ import classes from './Hero.module.css';
 import logoDark from '../assets/logo_2.svg';
 import logoLight from '../assets/logo_3.svg';
 
+// ... (interfaces και blockContent παραμένουν ίδια) ...
 interface ListBlock {
   title: string;
   subtitle: string;
@@ -70,6 +72,8 @@ export function Hero() {
   const panelRef = useRef<HTMLDivElement>(null);
   const blocksGridRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  // --- ΑΛΛΑΓΗ 1: Προσθέτουμε μια νέα κατάσταση για να ξέρουμε πότε τελείωσε η animation ---
+  const [isReady, setIsReady] = useState(false);
   const { colorScheme } = useMantineColorScheme();
 
   const logoSrc = colorScheme === 'dark' ? logoLight : logoDark;
@@ -90,10 +94,6 @@ export function Hero() {
       const timer = setTimeout(() => {
         if (blocksGridRef.current) {
           const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
-          
-          // *** Η ΜΟΝΗ ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ***
-          // Αυξάνουμε το offset για να σταματήσει το scroll πιο ψηλά.
-          // Μπορείς να παίξεις με αυτόν τον αριθμό (π.χ., 120, 150).
           const offset = 200; 
 
           window.scrollTo({
@@ -124,13 +124,30 @@ export function Hero() {
         </Title>
 
         <Text size="xl" c="dimmed" ta="center">Ο ψηφιακός σύμβουλος που χρειάζεσαι.<br />Για να χτίσεις, να οργανώσεις και να αναπτυχθείς.</Text>
-        <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')}>Ξεκινήστε</Button>
+        
+        {/* --- ΑΛΛΑΓΗ 2: Απενεργοποιούμε το κουμπί μέχρι το isReady να γίνει true --- */}
+        <Button 
+          size="lg" 
+          mt="lg" 
+          className={classes.ctaButton} 
+          onClick={() => handleBlockClick('idea')}
+          disabled={!isReady} // Το κουμπί είναι απενεργοποιημένο όταν το isReady είναι false
+        >
+          Ξεκινήστε
+        </Button>
         
         <img src={logoSrc} alt="Company Logo" className={classes.companyLogo} />
 
         <div ref={intersectionRef} style={{ height: '1px', width: '100%' }} />
 
-        <Transition mounted={hasAnimated} transition="slide-up" duration={800} timingFunction="ease">
+        {/* --- ΑΛΛΑΓΗ 3: Χρησιμοποιούμε το onEntered για να αλλάξουμε το isReady σε true --- */}
+        <Transition 
+          mounted={hasAnimated} 
+          transition="slide-up" 
+          duration={800} 
+          timingFunction="ease"
+          onEntered={() => setIsReady(true)} // Αυτό εκτελείται ΜΟΝΟ ΟΤΑΝ τελειώσει η animation
+        >
           {(styles) => (
             <SimpleGrid 
               ref={blocksGridRef}
@@ -141,30 +158,32 @@ export function Hero() {
               className={classes.blocksGrid}
               style={styles}
             >
+              {/* ... οι τρεις κάρτες παραμένουν ίδιες ... */}
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
                   <Title order={3} ta="center" className={classes.blockTitle}>Free Plan</Title>
-                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')}>Ξεκινήστε</Button>
+                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')} disabled={!isReady}>Ξεκινήστε</Button>
                 </Stack>
               </Card>
 
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
                   <Title order={3} ta="center" className={classes.blockTitle}>Pro Plan</Title>
-                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('strategy')}>Ξεκινήστε</Button>
+                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('strategy')} disabled={!isReady}>Ξεκινήστε</Button>
                 </Stack>
               </Card>
 
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
                   <Title order={3} ta="center" className={classes.blockTitle}>Consulting Plan</Title>
-                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('partner')}>Ξεκινήστε</Button>
+                  <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('partner')} disabled={!isReady}>Ξεκινήστε</Button>
                 </Stack>
               </Card>
             </SimpleGrid>
           )}
         </Transition>
 
+        {/* ... το υπόλοιπο αρχείο παραμένει ίδιο ... */}
         {activeBlock && (
           <Card ref={panelRef} key={activeBlock} shadow="sm" padding="xl" radius="md" mt="xl" w="100%" className={`${classes.blockCard} ${classes.expandedPanel}`}>
             <Stack justify="space-between" h="100%">
