@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { Container, Title, Text, Stack, Button, SimpleGrid, Card, List, ThemeIcon, Group, Divider, Transition } from '@mantine/core';
+import { Container, Title, Text, Stack, Button, SimpleGrid, Card, List, ThemeIcon, Group, Divider, Transition, useMantineColorScheme } from '@mantine/core';
 import { IconCircleCheck, IconTool } from '@tabler/icons-react';
 import { useIntersection } from '@mantine/hooks';
 import classes from './Hero.module.css';
-import companyLogo from '../assets/logo_2.svg';
+import logoDark from '../assets/logo_2.svg';
+import logoLight from '../assets/logo_3.svg';
 
-// ... το interface ListBlock και το object blockContent παραμένουν ίδια ...
 interface ListBlock {
   title: string;
   subtitle: string;
@@ -68,7 +68,11 @@ type BlockType = 'idea' | 'strategy' | 'partner';
 export function Hero() {
   const [activeBlock, setActiveBlock] = useState<BlockType | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const blocksGridRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
+
+  const logoSrc = colorScheme === 'dark' ? logoLight : logoDark;
 
   const { ref: intersectionRef, entry } = useIntersection({
     root: null,
@@ -82,8 +86,24 @@ export function Hero() {
   }, [entry?.isIntersecting, hasAnimated]);
 
   useEffect(() => {
-    if (activeBlock && panelRef.current) {
-      panelRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (activeBlock && blocksGridRef.current) {
+      const timer = setTimeout(() => {
+        if (blocksGridRef.current) {
+          const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
+          
+          // *** Η ΜΟΝΗ ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ***
+          // Αυξάνουμε το offset για να σταματήσει το scroll πιο ψηλά.
+          // Μπορείς να παίξεις με αυτόν τον αριθμό (π.χ., 120, 150).
+          const offset = 200; 
+
+          window.scrollTo({
+            top: elementPosition - offset,
+            behavior: 'smooth'
+          });
+        }
+      }, 50);
+
+      return () => clearTimeout(timer);
     }
   }, [activeBlock]);
 
@@ -94,26 +114,26 @@ export function Hero() {
   const containerPaddingBottom = activeBlock ? '0px' : '100px';
 
   return (
-    <Container size="lg" style={{ paddingTop: '250px', paddingBottom: containerPaddingBottom }}>
+    <Container size="lg" style={{ paddingTop: '150px', paddingBottom: containerPaddingBottom }}>
       
       <Stack align="center" gap="lg">
 
-        {/* --- ΑΛΛΑΓΗ ΕΔΩ --- */}
         <Title order={1} ta="center" className={classes.titleContainer}>
           <span className={classes.titleBlock}>BLOCK</span>
           <span className={classes.titleSubtitle}>Το βασικό εργαλείο για την επιχείρηση</span>
         </Title>
-        {/* --- ΤΕΛΟΣ ΑΛΛΑΓΗΣ --- */}
 
         <Text size="xl" c="dimmed" ta="center">Ο ψηφιακός σύμβουλος που χρειάζεσαι.<br />Για να χτίσεις, να οργανώσεις και να αναπτυχθείς.</Text>
         <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')}>Ξεκινήστε</Button>
-        <img src={companyLogo} alt="Company Logo" className={classes.companyLogo} />
+        
+        <img src={logoSrc} alt="Company Logo" className={classes.companyLogo} />
 
         <div ref={intersectionRef} style={{ height: '1px', width: '100%' }} />
 
         <Transition mounted={hasAnimated} transition="slide-up" duration={800} timingFunction="ease">
           {(styles) => (
             <SimpleGrid 
+              ref={blocksGridRef}
               cols={{ base: 1, sm: 3 }} 
               spacing="xl" 
               mt={0} 
