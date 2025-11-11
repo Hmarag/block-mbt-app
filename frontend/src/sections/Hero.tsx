@@ -7,6 +7,7 @@ import classes from './Hero.module.css';
 import logoDark from '../assets/logo_2.svg';
 import logoLight from '../assets/logo_3.svg';
 
+// ... (το interface και το blockContent παραμένουν ίδια) ...
 interface ListBlock {
   title: string;
   subtitle: string;
@@ -70,9 +71,8 @@ export function Hero() {
   const panelRef = useRef<HTMLDivElement>(null);
   const blocksGridRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  // --- ΑΛΛΑΓΗ 1: Κρατάμε δύο καταστάσεις ---
-  const [isAnimationComplete, setIsAnimationComplete] = useState(false); // Μας λέει αν η αρχική animation τελείωσε
-  const [scrollRequested, setScrollRequested] = useState(false); // "Σημειώνει" αν ο χρήστης ζήτησε scroll
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+  const [scrollRequested, setScrollRequested] = useState(false);
 
   const { colorScheme } = useMantineColorScheme();
   const logoSrc = colorScheme === 'dark' ? logoLight : logoDark;
@@ -88,15 +88,11 @@ export function Hero() {
     }
   }, [entry?.isIntersecting, hasAnimated]);
 
-  // --- ΑΛΛΑΓΗ 2: Το "έξυπνο" useEffect για το scroll ---
   useEffect(() => {
-    // Αν δεν έχει ζητηθεί scroll ή αν η animation δεν έχει τελειώσει, μην κάνεις τίποτα
     if (!scrollRequested || !isAnimationComplete) {
       return;
     }
 
-    // Αν φτάσαμε εδώ, σημαίνει ότι ο χρήστης πάτησε το κουμπί ΚΑΙ η animation έχει τελειώσει.
-    // Τώρα μπορούμε να κάνουμε το scroll με ασφάλεια.
     if (blocksGridRef.current) {
       const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
       const offset = 200; 
@@ -106,16 +102,23 @@ export function Hero() {
         behavior: 'smooth'
       });
     }
-
-    // "Καθαρίζουμε" το αίτημα για scroll για να μην ξαναγίνει από λάθος
+    
     setScrollRequested(false);
 
-  }, [scrollRequested, isAnimationComplete]); // Αυτό το effect τρέχει κάθε φορά που αλλάζει ένα από τα δύο
+  }, [scrollRequested, isAnimationComplete]);
 
+  // --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
   const handleBlockClick = (blockType: BlockType) => {
+    // 1. Εναλλάσσουμε την εμφάνιση της μεγάλης κάρτας
     setActiveBlock(prev => (prev === blockType ? null : blockType));
-    // Όταν ο χρήστης πατάει το κουμπί, απλά "σημειώνουμε" ότι ζήτησε scroll
+    
+    // 2. "Σημειώνουμε" ότι ο χρήστης ζήτησε scroll
     setScrollRequested(true);
+
+    // 3. Εξασφαλίζουμε ότι η animation θα ξεκινήσει, ακόμα κι αν ο χρήστης δεν έχει κάνει scroll
+    if (!hasAnimated) {
+      setHasAnimated(true);
+    }
   };
 
   const containerPaddingBottom = activeBlock ? '0px' : '100px';
@@ -132,7 +135,6 @@ export function Hero() {
 
         <Text size="xl" c="dimmed" ta="center">Ο ψηφιακός σύμβουλος που χρειάζεσαι.<br />Για να χτίσεις, να οργανώσεις και να αναπτυχθείς.</Text>
         
-        {/* Τα κουμπιά είναι πάντα ενεργά! */}
         <Button 
           size="lg" 
           mt="lg" 
@@ -146,7 +148,6 @@ export function Hero() {
 
         <div ref={intersectionRef} style={{ height: '1px', width: '100%' }} />
 
-        {/* --- ΑΛΛΑΓΗ 3: Όταν τελειώνει η animation, ενημερώνουμε την κατάσταση --- */}
         <Transition 
           mounted={hasAnimated} 
           transition="slide-up" 
