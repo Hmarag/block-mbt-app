@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   PasswordInput,
   Text,
