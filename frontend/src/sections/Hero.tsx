@@ -22,7 +22,7 @@ const blockContent: {
   partner: ListBlock;
 } = {
   idea: {
-    title: 'IDEA BLOCK',
+    title: 'Idea Block',
     subtitle: 'Διαμορφώστε την ιδέα σας σε ένα βασικό πλάνο',
     type: 'list',
     items: [
@@ -79,41 +79,34 @@ export function Hero() {
     threshold: 0.15,
   });
 
-  // Αυτό το effect τώρα απλά ενεργοποιεί την animation αν ο χρήστης κάνει scroll
   useEffect(() => {
     if (entry?.isIntersecting && !hasAnimated) {
       setHasAnimated(true);
     }
   }, [entry?.isIntersecting, hasAnimated]);
 
-  // --- ΑΛΛΑΓΗ 1: Επιστρέφουμε στην απλή και γρήγορη λογική του scroll ---
+  // --- ΑΛΛΑΓΗ ΕΔΩ: Νέα, απλοποιημένη λογική για το scroll ---
   useEffect(() => {
-    // Αν δεν έχει επιλεγεί κάποιο block, δεν κάνουμε τίποτα
+    // Αν δεν υπάρχει ενεργό block, μην κάνεις τίποτα
     if (!activeBlock) return;
 
-    // Χρησιμοποιούμε ένα μικρό timeout για να δώσουμε χρόνο στον browser να ξεκινήσει τις αλλαγές
+    // Χρησιμοποιούμε ένα μικρό timeout για να προλάβει το panel να εμφανιστεί στην οθόνη
     const timer = setTimeout(() => {
-      if (blocksGridRef.current) {
-        const elementPosition = blocksGridRef.current.getBoundingClientRect().top + window.scrollY;
-        const offset = 200; 
+      // Αν το panel υπάρχει, του λέμε να σκρολάρει στο κέντρο της οθόνης
+      panelRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 50);
 
-        window.scrollTo({
-          top: elementPosition - offset,
-          behavior: 'smooth'
-        });
-      }
-    }, 50); // 50ms είναι αρκετά για να ξεκινήσει η animation χωρίς να φαίνεται η καθυστέρηση
-
+    // Καθαρίζουμε το timer για να αποφύγουμε προβλήματα
     return () => clearTimeout(timer);
-  }, [activeBlock]); // Το effect εξαρτάται ΜΟΝΟ από την αλλαγή του activeBlock
+  }, [activeBlock]); // Αυτό το εφέ τρέχει κάθε φορά που αλλάζει το activeBlock
 
-  // --- ΑΛΛΑΓΗ 2: Απλοποιούμε το click handler ---
   const handleBlockClick = (blockType: BlockType) => {
-    // 1. Εξασφαλίζουμε ότι η animation θα ξεκινήσει, ακόμα κι αν ο χρήστης δεν έχει κάνει scroll
     if (!hasAnimated) {
       setHasAnimated(true);
     }
-    // 2. Εναλλάσσουμε την εμφάνιση της μεγάλης κάρτας. Αυτή η αλλαγή θα πυροδοτήσει το παραπάνω useEffect.
     setActiveBlock(prev => (prev === blockType ? null : blockType));
   };
 
@@ -140,7 +133,31 @@ export function Hero() {
           Ξεκινήστε
         </Button>
         
-        <img src={logoSrc} alt="Company Logo" className={classes.companyLogo} />
+        <SimpleGrid 
+          cols={{ base: 1, sm: 2 }} 
+          spacing="xl" 
+          verticalSpacing={50} 
+          mt={80} 
+          w="100%"
+          style={{ alignItems: 'center' }}
+        >
+          <Stack align="center" justify="center">
+            <img src={logoSrc} alt="Company Logo" className={classes.companyLogo} style={{ maxWidth: '250px' }} />
+          </Stack>
+
+          <Card shadow="sm" padding="xl" radius="md" className={classes.infoCard}>
+            <Stack justify="center" gap="md">
+              <Text size="lg">
+                Η <strong>block-mbt</strong> είναι μια ψηφιακή, αυτοματοποιημένη συμβουλευτική πλατφόρμα που βοηθά startups και μικρές επιχειρήσεις να αναπτυχθούν στρατηγικά — χωρίς να χρειάζονται ακριβές, χρονοβόρες συμβουλευτικές υπηρεσίες.
+              </Text>
+              <Text size="lg">
+                Μέσα από έξυπνες φόρμες, εξατομικευμένες προτάσεις και τεχνητή νοημοσύνη, οι χρήστες λαμβάνουν πλήρη καθοδήγηση για τη δημιουργία, ανάπτυξη και χρηματοδότηση της επιχείρησής τους.
+              </Text>
+            </Stack>
+          </Card>
+        </SimpleGrid>
+
+        <div style={{ height: '80px' }} />
 
         <div ref={intersectionRef} style={{ height: '1px', width: '100%' }} />
 
@@ -162,21 +179,21 @@ export function Hero() {
             >
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
-                  <Title order={3} ta="center" className={classes.blockTitle}>Free Plan</Title>
+                  <Title order={3} ta="center" className={classes.blockTitle}>Idea Block</Title>
                   <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('idea')}>Ξεκινήστε</Button>
                 </Stack>
               </Card>
 
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
-                  <Title order={3} ta="center" className={classes.blockTitle}>Pro Plan</Title>
+                  <Title order={3} ta="center" className={classes.blockTitle}>Strategy Block</Title>
                   <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('strategy')}>Ξεκινήστε</Button>
                 </Stack>
               </Card>
 
               <Card shadow="sm" padding="lg" radius="md" className={classes.blockCard}>
                 <Stack align="center" justify="space-between" h="100%">
-                  <Title order={3} ta="center" className={classes.blockTitle}>Consulting Plan</Title>
+                  <Title order={3} ta="center" className={classes.blockTitle}>Partner Block</Title>
                   <Button size="lg" mt="lg" className={classes.ctaButton} onClick={() => handleBlockClick('partner')}>Ξεκινήστε</Button>
                 </Stack>
               </Card>

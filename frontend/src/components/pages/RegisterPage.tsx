@@ -46,18 +46,24 @@ export function RegisterPage() {
       name: (val) => (val.trim().length < 2 ? 'Το όνομα πρέπει να έχει τουλάχιστον 2 χαρακτήρες' : null),
       email: (val) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? null : 'Παρακαλώ εισάγετε μια έγκυρη διεύθυνση email'),
       password: (val) => {
+        const errors = [];
         if (val.length < 8) {
-          return 'Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες';
+          errors.push('τουλάχιστον 8 χαρακτήρες');
         }
         if (!/[A-Z]/.test(val)) {
-          return 'Ο κωδικός πρέπει να περιέχει τουλάχιστον ένα κεφαλαίο γράμμα';
+          errors.push('ένα κεφαλαίο γράμμα');
         }
         if (!/[a-z]/.test(val)) {
-          return 'Ο κωδικός πρέπει να περιέχει τουλάχιστον ένα πεζό γράμμα';
+          errors.push('ένα πεζό γράμμα');
         }
         if (!/\d/.test(val)) {
-          return 'Ο κωδικός πρέπει να περιέχει τουλάχιστον έναν αριθμό';
+          errors.push('έναν αριθμό');
         }
+
+        if (errors.length > 0) {
+          return `Ο κωδικός πρέπει να περιέχει: ${errors.join(', ')}.`;
+        }
+
         return null;
       },
       confirmPassword: (val, values) => (val !== values.password ? 'Οι κωδικοί δεν ταιριάζουν' : null),
@@ -95,8 +101,6 @@ export function RegisterPage() {
   const handleGoogleLogin = () => {
     const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     
-    // *** Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ***
-    // Διασφαλίζει ότι δεν θα υπάρξει ποτέ διπλό slash
     const googleLoginUrl = `${backendUrl.replace(/\/$/, '')}/auth/google/login`;
     
     window.location.href = googleLoginUrl;

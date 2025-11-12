@@ -23,12 +23,21 @@
 }
 
 .companyLogo {
-  width: 30%; 
+  width: 100%; 
   height: auto;
-  margin-top: 20px;
-  margin-right: auto;
-  margin-left: 35%;
-  margin-bottom: 150px; 
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) 
+          drop-shadow(0 12px 30px rgba(0, 0, 0, 0.25));
+  transition: filter 0.3s ease;
+}
+
+[data-mantine-color-scheme='dark'] .companyLogo {
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2)) 
+          drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
+}
+
+.infoCard {
+  border: 5px solid black;
+  min-height: 220px;
 }
 
 .blockCard {
@@ -40,6 +49,7 @@
   margin-top: -50px;
 }
 
+/* --- ΣΤΥΛ ΓΙΑ ΤΟΝ ΚΕΝΤΡΙΚΟ ΤΙΤΛΟ ΤΟΥ ΠΑΚΕΤΟΥ --- */
 .blockTitle {
   width: 100%;
   border-bottom: 3px solid black;
@@ -47,20 +57,48 @@
   margin-bottom: 15px;
 }
 
+/* --- ΑΛΛΑΓΗ ΕΔΩ: Κεντράρισμα της ομάδας --- */
+.bulletGroup {
+  align-items: center;
+  justify-content: center; /* Αυτό κεντράρει την κουκκίδα και το κείμενο */
+}
+
+/* --- ΣΤΥΛ ΓΙΑ ΤΗΝ ΚΟΥΚΚΙΔΑ --- */
+.bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-black);
+  flex-shrink: 0;
+}
+
+/* --- ΣΤΥΛ ΓΙΑ ΤΟ ΚΕΙΜΕΝΟ ΔΙΠΛΑ ΣΤΗΝ ΚΟΥΚΚΙΔΑ --- */
+.bulletText {
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 500;
+}
+
 [data-mantine-color-scheme='dark'] .blockCard {
   border-color: white;
 }
 
+[data-mantine-color-scheme='dark'] .infoCard {
+  border-color: white;
+}
+
+/* --- ΣΤΥΛ ΓΙΑ ΤΟ DARK MODE --- */
 [data-mantine-color-scheme='dark'] .blockTitle {
   border-bottom-color: white;
+}
+
+[data-mantine-color-scheme='dark'] .bullet {
+  background-color: var(--mantine-color-white);
 }
 
 .expandedPanel {
   min-height: 350px;
   animation: fadeInUp 0.5s ease-out forwards;
 }
-
-/* --- ΝΕΑ ΣΤΥΛ ΓΙΑ ΤΟΝ ΤΙΤΛΟ --- */
 
 .titleContainer {
   display: flex;
@@ -69,7 +107,6 @@
   line-height: 1.1;
 }
 
-/* Στυλ για τη λέξη "BLOCK" (απαλή σκιά) */
 .titleBlock {
   font-size: 120px;
   font-weight: 500;
@@ -77,7 +114,6 @@
   text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Στυλ για τον υπότιτλο (3D εφέ) */
 .titleSubtitle {
   font-size: 60px;
   font-weight: 500;
@@ -90,7 +126,6 @@
     5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Προσαρμογές για το Dark Mode */
 [data-mantine-color-scheme='dark'] .titleBlock {
   color: var(--mantine-color-gray-2);
   text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.4);
@@ -106,8 +141,6 @@
     5px 5px 15px rgba(0, 0, 0, 0.5);
 }
 
-
-/* --- ΚΙΝΟΥΜΕΝΑ ΣΧΕΔΙΑ --- */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -119,9 +152,6 @@
   }
 }
 
-/* --- ΠΡΟΣΘΗΚΗ ΕΔΩ: Responsive Adjustments --- */
-
-/* Για οθόνες tablet και κάτω */
 @media (max-width: 992px) {
   .titleBlock {
     font-size: 90px;
@@ -131,14 +161,12 @@
   }
 }
 
-/* Για οθόνες κινητών (landscape) και κάτω */
 @media (max-width: 768px) {
   .titleBlock {
     font-size: 70px;
   }
   .titleSubtitle {
     font-size: 35px;
-    /* Μειώνουμε το 3D εφέ για να μην φαίνεται "βαρύ" */
     text-shadow: 
       1px 1px 0 #c1c2c5,
       2px 2px 0 #a6a7ab,
@@ -152,7 +180,6 @@
   }
 }
 
-/* Για οθόνες κινητών (portrait) */
 @media (max-width: 576px) {
   .titleBlock {
     font-size: 55px;
