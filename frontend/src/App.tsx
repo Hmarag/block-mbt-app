@@ -1,6 +1,8 @@
-import { RegisterPage } from './components/pages/RegisterPage';
-// ΑΦΑΙΡΟΥΜΕ ΤΟΝ ΠΕΡΙΤΤΟ ROUTER ΑΠΟ ΤΟ IMPORT
 import { Routes, Route } from 'react-router-dom'; 
+import { AppShell } from '@mantine/core';
+
+// Your existing page imports
+import { RegisterPage } from './components/pages/RegisterPage';
 import { Header } from './components/Header';
 import { Hero } from './sections/Hero';
 import { Footer } from './sections/Footer';
@@ -9,14 +11,16 @@ import { LoginPage } from './components/pages/LoginPage';
 import { DashboardPage } from './components/pages/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { FormPage } from './components/pages/FormPage';
-import { AppShell } from '@mantine/core';
 import { VerifyEmailPage } from './components/pages/VerifyEmailPage';
 import { AboutPage } from './components/pages/AboutPage';
 import { ResultsPage } from './components/pages/ResultsPage';
-// ΑΦΑΙΡΟΥΜΕ ΤΟΝ ΠΕΡΙΤΤΟ AUTHPROVIDER ΑΠΟ ΤΟ IMPORT
-// import { AuthProvider } from './context/AuthContext'; 
 import { ContactPage } from './components/pages/ContactPage';
 import { AuthCallbackPage } from './components/pages/AuthCallbackPage';
+
+// --- ΠΡΟΣΘΗΚΗ ΤΩΝ IMPORTS ΓΙΑ ΤΙΣ ΝΕΕΣ ΣΕΛΙΔΕΣ ---
+import { RequestPasswordResetPage } from './components/pages/RequestPasswordResetPage';
+import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
+
 
 function App() {
   
@@ -25,7 +29,6 @@ function App() {
   const FOOTER_HEIGHT = 280; 
 
   return (
-    // ΔΕΝ ΧΡΕΙΑΖΟΜΑΣΤΕ ΤΟΝ AuthProvider ΚΑΙ ΤΟΝ Router ΕΔΩ
     <AppShell
       header={{ height: HEADER_HEIGHT + HEADER_PADDING_TOP }}
       footer={{ height: FOOTER_HEIGHT }}
@@ -41,15 +44,20 @@ function App() {
 
       <AppShell.Main>
         <Routes>
+          {/* Existing Routes */}
           <Route path="/" element={<Hero />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
+          {/* --- ΠΡΟΣΘΗΚΗ ΤΩΝ ΝΕΩΝ ROUTES ΕΔΩ --- */}
+          <Route path="/request-password-reset" element={<RequestPasswordResetPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={

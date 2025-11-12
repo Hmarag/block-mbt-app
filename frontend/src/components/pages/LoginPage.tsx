@@ -142,7 +142,7 @@ export function LoginPage() {
               </Stack>
 
               <Group justify="space-between" mt="xl">
-                <Anchor component="button" type="button" c="dimmed" size="xs">
+                <Anchor component={Link} to="/request-password-reset" c="dimmed" size="xs">
                   Ξέχασες τον κωδικό σου;
                 </Anchor>
                 <Button type="submit" className={classes.submitButton} loading={isSubmitting}>
