@@ -10,14 +10,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-# --- ΑΛΛΑΓΗ ΕΔΩ ---
 class UserOut(UserBase):
     id: int
     is_active: bool
     created_at: datetime
 
-    # Αυτή η εσωτερική κλάση επιτρέπει στο Pydantic
-    # να διαβάσει δεδομένα από αντικείμενα της βάσης (ORM models)
     class Config:
         orm_mode = True
 
@@ -69,3 +66,11 @@ class ContactForm(BaseModel):
     email: EmailStr
     subject: str
     message: str
+
+# --- ΝΕΑ SCHEMAS ΓΙΑ ΑΛΛΑΓΗ ΚΩΔΙΚΟΥ ---
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
