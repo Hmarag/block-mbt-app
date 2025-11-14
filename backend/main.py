@@ -67,16 +67,27 @@ async def google_callback(code: str, session: AsyncSession = Depends(get_session
         token_data = await google_client.get_access_token(code, redirect_uri=REDIRECT_URI)
         user_info_tuple = await google_client.get_id_email(token=token_data["access_token"])
         user_email, user_name = user_info_tuple[1], (user_info_tuple[2] or user_info_tuple[1].split('@')[0]).replace(" ", "_")
+        
         db_user = await crud.get_user_by_email(session, email=user_email)
+
         if not db_user:
+            # --- ΔΙΟΡΘΩΜΕΝΗ ΛΟΓΙΚΗ ΔΗΜΙΟΥΡΓΙΑΣ ΧΡΗΣΤΗ ---
             random_password = secrets.token_urlsafe(16)
-            db_user = await crud.create_user(session, username=user_name, email=user_email, password=random_password)
+            # 1. Προετοιμάζουμε τον χρήστη χωρίς να τον αποθηκεύσουμε
+            db_user = crud.prepare_new_user(username=user_name, email=user_email, password=random_password)
+            # 2. Τον ενεργοποιούμε άμεσα, αφού ήρθε από το Google
             db_user.is_active = True
+            # 3. Τον προσθέτουμε στο session
+            session.add(db_user)
+            # 4. Κάνουμε commit ΜΙΑ φορά για να αποθηκευτούν όλα μαζί
             await session.commit()
             await session.refresh(db_user)
+            # ------------------------------------------------
+
         access_token = auth_utils.create_access_token(data={"sub": db_user.username})
         frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
         return RedirectResponse(url=f"{frontend_url}/auth/callback?token={access_token}")
+        
     except Exception as e:
         print(f"Google Auth Error: {e}")
         frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")

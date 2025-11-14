@@ -5,6 +5,9 @@ import bleach
 
 from models import User, Project, Answer
 from schemas import ProjectCreate, AnswersIn
+# lazy import to avoid circular import
+from auth_utils import get_password_hash
+
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
     result = await session.execute(select(User).where(User.username == username))
@@ -14,12 +17,20 @@ async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
     result = await session.execute(select(User).where(User.email == email))
     return result.scalars().first()
 
-async def create_user(session: AsyncSession, username: str, email: str, password: str) -> User:
-    # lazy import to avoid circular import
-    from auth_utils import get_password_hash
-
+def prepare_new_user(username: str, email: str, password: str) -> User:
+    """
+    Προετοιμάζει ένα νέο αντικείμενο User χωρίς να κάνει commit στη βάση.
+    Αυτό επιτρέπει περαιτέρω τροποποιήσεις πριν την τελική αποθήκευση.
+    """
     hashed_password = get_password_hash(password)
     db_user = User(username=username, email=email, hashed_password=hashed_password)
+    return db_user
+
+async def create_user(session: AsyncSession, username: str, email: str, password:str) -> User:
+    """
+    Δημιουργεί έναν νέο χρήστη και τον αποθηκεύει άμεσα στη βάση δεδομένων.
+    """
+    db_user = prepare_new_user(username, email, password)
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
