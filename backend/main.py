@@ -13,6 +13,7 @@ from models import Base
 import json
 from fastapi import FastAPI, HTTPException, status, Depends, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from typing import List, Union
@@ -21,7 +22,6 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-# --- ΠΡΟΣΘΗΚΗ ΝΕΩΝ SCHEMAS ---
 from schemas import UserCreate, UserOut, ProjectCreate, ProjectOut, Token, AnswersIn, ContactForm, PasswordResetRequest, PasswordReset
 import auth_utils
 import ai_utils
@@ -35,6 +35,13 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Block MBT API")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# --- ΕΝΕΡΓΟΠΟΙΗΣΗ SESSION MIDDLEWARE ---
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set in environment variables!")
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+# -----------------------------------------
 
 origins = [
     "http://localhost:5173", "http://127.0.0.1:5173",
@@ -57,26 +64,22 @@ async def on_startup():
 # --- Authentication Endpoints ---
 
 @app.get("/auth/google/login", tags=["Authentication"])
-async def google_login():
-    authorization_url = await google_client.get_authorization_url(redirect_uri=REDIRECT_URI)
+async def google_login(request: Request):
+    authorization_url = await google_client.get_authorization_url(request, redirect_uri=REDIRECT_URI)
     return RedirectResponse(authorization_url)
 
 @app.get("/auth/google/callback", tags=["Authentication"])
-async def google_callback(code: str, session: AsyncSession = Depends(get_session)):
+async def google_callback(request: Request, session: AsyncSession = Depends(get_session)):
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     try:
-        token_data = await google_client.get_access_token(code, redirect_uri=REDIRECT_URI)
+        token_data = await google_client.get_access_token(request, code=request.query_params.get('code'))
         
-        # --- ΔΙΟΡΘΩΜΕΝΗ ΛΟΓΙΚΗ & UNPACKING ---
         google_id, user_email, user_name_from_google = await google_client.get_id_email(token=token_data["access_token"])
 
-        # Έλεγχος ασφαλείας: Αν το Google δεν επιστρέψει email, αποτυγχάνουμε.
         if not user_email:
             raise HTTPException(status_code=400, detail="Email not provided by Google.")
 
-        # Δημιουργία ενός ασφαλούς username
         user_name = (user_name_from_google or user_email.split('@')[0]).replace(" ", "_")
-        # -----------------------------------------
         
         db_user = await crud.get_user_by_email(session, email=user_email)
 
@@ -95,6 +98,7 @@ async def google_callback(code: str, session: AsyncSession = Depends(get_session
         print(f"Google Auth Error: {e}")
         return RedirectResponse(url=f"{frontend_url}/login?error=google-auth-failed")
 
+# ... (το υπόλοιπο αρχείο παραμένει ως έχει) ...
 @app.post("/auth/register", status_code=status.HTTP_201_CREATED, tags=["Authentication"])
 async def register_user(user: UserCreate, background_tasks: BackgroundTasks, session: AsyncSession = Depends(get_session)):
     if await crud.get_user_by_username(session, user.username):

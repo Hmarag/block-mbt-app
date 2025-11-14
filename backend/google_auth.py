@@ -23,11 +23,11 @@ class GoogleAuth:
         )
         self.session = AsyncClient()
 
-    async def get_authorization_url(self, redirect_uri: str):
-        return await self.oauth.google.authorize_redirect(redirect_uri)
+    async def get_authorization_url(self, request, redirect_uri: str):
+        return await self.oauth.google.authorize_redirect(request, redirect_uri)
 
-    async def get_access_token(self, code: str, redirect_uri: str):
-        return await self.oauth.google.authorize_access_token(code=code, redirect_uri=redirect_uri)
+    async def get_access_token(self, request, code: str):
+        return await self.oauth.google.authorize_access_token(request, code=code)
 
     async def get_id_email(self, token: str):
         async with self.session.get(
@@ -36,10 +36,7 @@ class GoogleAuth:
         ) as resp:
             if resp.status == 200:
                 data = await resp.json()
-                # --- Η ΚΡΙΣΙΜΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
-                # Πρέπει να επιστρέφει 3 στοιχεία: sub (id), email, και name
                 return data.get("sub"), data.get("email"), data.get("name")
-            # Επιστρέφει 3 None σε περίπτωση σφάλματος για να αποφευχθεί το unpack error
             return None, None, None
 
     async def close_session(self):
