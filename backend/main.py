@@ -65,8 +65,9 @@ async def on_startup():
 
 @app.get("/auth/google/login", tags=["Authentication"])
 async def google_login(request: Request):
-    authorization_url = await google_client.get_authorization_url(request, redirect_uri=REDIRECT_URI)
-    return RedirectResponse(authorization_url)
+    # --- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+    # Η συνάρτηση επιστρέφει ένα έτοιμο RedirectResponse, το οποίο απλά το επιστρέφουμε.
+    return await google_client.get_authorization_url(request, redirect_uri=REDIRECT_URI)
 
 @app.get("/auth/google/callback", tags=["Authentication"])
 async def google_callback(request: Request, session: AsyncSession = Depends(get_session)):
@@ -98,7 +99,7 @@ async def google_callback(request: Request, session: AsyncSession = Depends(get_
         print(f"Google Auth Error: {e}")
         return RedirectResponse(url=f"{frontend_url}/login?error=google-auth-failed")
 
-# ... (το υπόλοιπο αρχείο παραμένει ως έχει) ...
+# ... (το υπόλοιπο αρχείο παραμένει ως έχει και είναι σωστό) ...
 @app.post("/auth/register", status_code=status.HTTP_201_CREATED, tags=["Authentication"])
 async def register_user(user: UserCreate, background_tasks: BackgroundTasks, session: AsyncSession = Depends(get_session)):
     if await crud.get_user_by_username(session, user.username):
