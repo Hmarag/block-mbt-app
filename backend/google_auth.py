@@ -27,20 +27,24 @@ class GoogleAuth:
         return await self.oauth.google.authorize_redirect(request, redirect_uri)
 
     async def get_access_token(self, request):
-        # --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
-        # Η authlib βρίσκει τον 'code' μόνη της από το 'request'.
-        # Δεν χρειάζεται να τον περάσουμε χειροκίνητα.
         return await self.oauth.google.authorize_access_token(request)
 
     async def get_id_email(self, token: str):
-        async with self.session.get(
+        # --- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+        # Χρησιμοποιούμε 'await' για να περιμένουμε την απάντηση από το Google
+        # και δεν χρησιμοποιούμε 'async with' με λάθος τρόπο.
+        resp = await self.session.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
             headers={"Authorization": f"Bearer {token}"},
-        ) as resp:
-            if resp.status == 200:
-                data = await resp.json()
-                return data.get("sub"), data.get("email"), data.get("name")
-            return None, None, None
+        )
+        
+        if resp.status_code == 200:
+            data = resp.json()
+            return data.get("sub"), data.get("email"), data.get("name")
+        
+        # Σε περίπτωση σφάλματος, τυπώνουμε το σφάλμα για debugging
+        print(f"Google userinfo request failed with status {resp.status_code}: {resp.text}")
+        return None, None, None
 
     async def close_session(self):
         await self.session.aclose()
