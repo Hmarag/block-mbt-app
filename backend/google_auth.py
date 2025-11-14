@@ -26,8 +26,11 @@ class GoogleAuth:
     async def get_authorization_url(self, request, redirect_uri: str):
         return await self.oauth.google.authorize_redirect(request, redirect_uri)
 
-    async def get_access_token(self, request, code: str):
-        return await self.oauth.google.authorize_access_token(request, code=code)
+    async def get_access_token(self, request):
+        # --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+        # Η authlib βρίσκει τον 'code' μόνη της από το 'request'.
+        # Δεν χρειάζεται να τον περάσουμε χειροκίνητα.
+        return await self.oauth.google.authorize_access_token(request)
 
     async def get_id_email(self, token: str):
         async with self.session.get(

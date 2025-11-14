@@ -65,15 +65,15 @@ async def on_startup():
 
 @app.get("/auth/google/login", tags=["Authentication"])
 async def google_login(request: Request):
-    # --- Η ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
-    # Η συνάρτηση επιστρέφει ένα έτοιμο RedirectResponse, το οποίο απλά το επιστρέφουμε.
     return await google_client.get_authorization_url(request, redirect_uri=REDIRECT_URI)
 
 @app.get("/auth/google/callback", tags=["Authentication"])
 async def google_callback(request: Request, session: AsyncSession = Depends(get_session)):
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     try:
-        token_data = await google_client.get_access_token(request, code=request.query_params.get('code'))
+        # --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+        # Απλά περνάμε το 'request' και η authlib κάνει τα υπόλοιπα.
+        token_data = await google_client.get_access_token(request)
         
         google_id, user_email, user_name_from_google = await google_client.get_id_email(token=token_data["access_token"])
 
