@@ -1,6 +1,6 @@
 import os
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import Mail, ReplyTo
 
 def send_verification_email(recipient_email: str, verification_link: str):
     html_content = f"""
@@ -19,7 +19,7 @@ def send_verification_email(recipient_email: str, verification_link: str):
     </html>
     """
     message = Mail(
-        from_email='blockmbtco@gmail.com',
+        from_email='noreply@blockmbt.com', # <-- ΑΛΛΑΓΗ
         to_emails=recipient_email,
         subject='Επιβεβαίωση Λογαριασμού - Block MBT',
         html_content=html_content
@@ -31,7 +31,6 @@ def send_verification_email(recipient_email: str, verification_link: str):
     except Exception as e:
         print(f"Error sending email: {e}")
 
-# --- Η ΝΕΑ ΣΥΝΑΡΤΗΣΗ ΠΟΥ ΠΡΟΣΘΕΣΑΜΕ ---
 def send_password_reset_email(recipient_email: str, reset_link: str):
     html_content = f"""
     <html>
@@ -49,7 +48,7 @@ def send_password_reset_email(recipient_email: str, reset_link: str):
     </html>
     """
     message = Mail(
-        from_email='blockmbtco@gmail.com',
+        from_email='noreply@blockmbt.com', # <-- ΑΛΛΑΓΗ
         to_emails=recipient_email,
         subject='Αλλαγή Κωδικού - Block MBT',
         html_content=html_content
@@ -77,11 +76,14 @@ def send_contact_form_email(name: str, sender_email: str, subject: str, message_
     </html>
     """
     message = Mail(
-        from_email='blockmbtco@gmail.com',
+        from_email='noreply@blockmbt.com', # <-- ΑΛΛΑΓΗ
         to_emails=admin_email,
         subject=f"Νέο Μήνυμα: {subject}",
         html_content=html_content
     )
+    # --- ΒΕΛΤΙΩΣΗ: Όταν πατάς "Απάντηση", απαντάς απευθείας στον χρήστη ---
+    message.reply_to = ReplyTo(sender_email, name)
+    
     try:
         sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sendgrid_client.send(message)
