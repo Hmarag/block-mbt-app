@@ -113,7 +113,19 @@ export function RegisterPage() {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title={<Title order={3}>Όροι Χρήσης Ιστοσελίδας</Title>} centered size="lg" scrollAreaComponent={ScrollArea.Autosize}>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Title order={3}>Όροι Χρήσης Ιστοσελίδας</Title>}
+        centered
+        size="lg"
+        scrollAreaComponent={ScrollArea.Autosize}
+        styles={{
+          content: {
+            border: '2px solid black',
+          },
+        }}
+      >
         <Stack gap="md">
           <Title order={5}>1. Εισαγωγή</Title>
           <Text size="sm">Η παρούσα ιστοσελίδα (εφεξής «Ιστοσελίδα») ανήκει και λειτουργεί από την εταιρεία Block MBT. Με την πρόσβαση και χρήση της Ιστοσελίδας, ο χρήστης συμφωνεί με τους παρόντες Όρους Χρήσης. Εάν δεν συμφωνείτε, παρακαλούμε μην χρησιμοποιείτε την Ιστοσελίδα.</Text>
