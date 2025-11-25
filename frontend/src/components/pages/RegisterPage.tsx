@@ -122,7 +122,7 @@ export function RegisterPage() {
         scrollAreaComponent={ScrollArea.Autosize}
         styles={{
           content: {
-            border: '2px solid black',
+            border: '4px solid black',
           },
         }}
       >
