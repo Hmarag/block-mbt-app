@@ -1,7 +1,7 @@
 # Block MBT - Full-Stack Startup Advisory Platform
 
 <p align="center">
-  <img src="/Upload/ChatGPT Image Feb 8, 2026, 12_25_43 PM.png" alt="Block MBT Logo" width="400"/>
+  <img src="/Upload/Upload_image.png" alt="Block MBT Logo" width="400"/>
 </p>
 
 ---
