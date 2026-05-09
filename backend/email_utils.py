@@ -61,7 +61,7 @@ def send_password_reset_email(recipient_email: str, reset_link: str):
         print(f"Error sending password reset email: {e}")
 
 def send_contact_form_email(name: str, sender_email: str, subject: str, message_body: str):
-    admin_email = "hvmarag@gmail.com"
+    admin_email = "test@gmail.com"
     html_content = f"""
     <html>
     <body>
